@@ -1,0 +1,11 @@
+DROP ROLE IF EXISTS tb_ai_reader;
+
+CREATE ROLE tb_ai_reader WITH LOGIN PASSWORD 'ai_password_123';
+
+GRANT CONNECT ON DATABASE tb_db TO tb_ai_reader;
+
+GRANT USAGE ON SCHEMA public TO tb_ai_reader;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO tb_ai_reader;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO tb_ai_reader;

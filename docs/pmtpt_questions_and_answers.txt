@@ -1,0 +1,1094 @@
+================================================================================
+  PMTPT INDIA 2021 — DATABASE QUESTIONS & ANSWERS
+  Based on: Guidelines for Programmatic Management of TB Preventive Treatment
+            in India, 2021 (MoHFW, GoI / WHO)
+================================================================================
+
+------------------------------------------------------------------------
+SECTION A — GEOGRAPHY & ADMINISTRATIVE STRUCTURE
+------------------------------------------------------------------------
+
+Q1. How many states and Union Territories are present in the database?
+A1. 10 states: Maharashtra, Delhi, Kerala, Chhattisgarh, Uttar Pradesh,
+    Tamil Nadu, Gujarat, West Bengal, Karnataka, and Rajasthan.
+
+Q2. Which states belong to the North region?
+A2. Delhi, Uttar Pradesh, and Rajasthan.
+
+Q3. Which states belong to the South region?
+A3. Kerala, Tamil Nadu, and Karnataka.
+
+Q4. How many districts are recorded in the database?
+A4. 15 districts in total.
+
+Q5. Which two districts are in Maharashtra?
+A5. Mumbai (MH-MUM) and Pune (MH-PUN).
+
+Q6. How many districts does Delhi have, and what are their names?
+A6. Two — Central Delhi (DL-CEN) and South Delhi (DL-STH).
+
+Q7. Which state contains the district of Lucknow?
+A7. Uttar Pradesh (state code: UP).
+
+Q8. How many TB Units (TUs) are seeded in the database?
+A8. Eight TB Units:
+    Mumbai North TU, Mumbai South TU, Central Delhi TU-1,
+    Thiruvananthapuram TU-1, Raipur TU-1, Lucknow TU-1,
+    Chennai North TU, and Bengaluru TU-1.
+
+Q9. To which district and state does "Lucknow TU-1" belong?
+A9. Lucknow district, Uttar Pradesh.
+
+------------------------------------------------------------------------
+SECTION B — HEALTH FACILITIES
+------------------------------------------------------------------------
+
+Q10. How many health facilities are recorded in total?
+A10. 14 health facilities.
+
+Q11. List all health facilities that have IGRA available.
+A11. KEM Hospital (Mumbai), GTB Hospital Delhi, SAT Hospital ART Centre
+     (Thiruvananthapuram), Raipur DR-TB Centre, KGMU ART Centre (Lucknow),
+     NIRT Chennai, Victoria Hospital (Bengaluru), Apollo Hospital Delhi.
+
+Q12. Which facility types are allowed by the CHECK constraint on health_facilities?
+A12. HWC, Sub-Centre, PHC, UPHC, CHC, District Hospital, Medical College,
+     ART Centre, Link ART Centre, DR-TB Centre, Private Clinic, ICTC,
+     Corporate Hospital, Dialysis Centre, Cancer Facility.
+
+Q13. Which health facilities are in the 'Private' sector?
+A13. Dr Mehta Private Clinic (Private Clinic) and Apollo Hospital Delhi
+     (Corporate Hospital).
+
+Q14. Which facility is of type 'Sub-Centre', and does it support TBI testing?
+A14. Mowa Sub-Centre (HF-RIP-002) in Raipur. It does NOT support TBI testing
+     (is_tbi_testing = FALSE) and also has no IGRA or X-ray.
+
+Q15. Which ART Centres are in the database?
+A15. Sion ART Centre (Mumbai), SAT Hospital ART Centre (Thiruvananthapuram),
+     and KGMU ART Centre (Lucknow).
+
+Q16. What is the Nikshay HF code for Dharavi HWC?
+A16. HF-MUM-001.
+
+Q17. Is X-ray available at Peroorkada PHC?
+A17. No — is_xray_available is FALSE for Peroorkada PHC (HF-TVM-002).
+
+------------------------------------------------------------------------
+SECTION C — TPT REGIMENS
+------------------------------------------------------------------------
+
+Q18. How many TPT regimens are defined in the database?
+A18. Four regimens: 6H, 3HP, 6Lfx, and 4R.
+
+Q19. What drugs are used in the 3HP regimen?
+A19. Isoniazid (H) and Rifapentine (P).
+
+Q20. What is the duration and total number of doses for the 6H regimen?
+A20. 6 months duration, 180 total doses (taken daily).
+
+Q21. What is the dose frequency and total doses for the 3HP regimen?
+A21. Weekly frequency, 12 total doses over 3 months.
+
+Q22. Which regimen requires a 90% completion threshold, and which require 80%?
+A22. 3HP requires 90% completion. 6H, 6Lfx, and 4R all require 80%.
+
+Q23. What is the extended duration (days) allowed for the 4R regimen?
+A23. 160 days (133% of the planned 4-month duration).
+
+Q24. For which patient population is 6Lfx indicated?
+A24. Contacts of MDR-TB / RR-TB patients whose index patient has an
+     FQ-sensitive strain.
+
+Q25. For which patient population is 4R indicated?
+A25. Contacts of H-resistant, R-sensitive TB (Hr-TB) index patients.
+
+Q26. What are the contraindications for the 3HP regimen?
+A26. Pregnancy, PI-based ART, Nevirapine, TAF (Tenofovir alafenamide),
+     children <2 years, and allergy to rifamycins.
+
+Q27. Is 6H safe during pregnancy?
+A27. Yes — the notes state "Safe in pregnancy."
+
+Q28. What is the maximum adult daily dose of Isoniazid in the 6H regimen?
+A28. 300 mg/day.
+
+Q29. In the 3HP regimen, for an adult weighing 56–70 kg, what dose of Rifapentine
+     is prescribed, and how many tablets per dose?
+A29. 900 mg of Rifapentine, using 150 mg tablets — 6 tablets per dose.
+
+Q30. For a child weighing 10–15 kg on the 3HP regimen, what is the Isoniazid dose
+     and how many 100 mg tablets should be given?
+A30. 300 mg — 3 tablets of 100 mg each per dose.
+
+------------------------------------------------------------------------
+SECTION D — TBI DIAGNOSTIC TESTS
+------------------------------------------------------------------------
+
+Q31. How many TBI diagnostic tests are catalogued?
+A31. Three: TST (Tuberculin Skin Test / Mantoux), QGIT (QuantiFERON-Gold
+     In-Tube), and T-SPOT.TB.
+
+Q32. What is the positive cut-off for TST in PLHIV patients?
+A32. ≥5 mm induration.
+
+Q33. What is the positive cut-off for QGIT (QuantiFERON)?
+A33. ≥0.35 IU/ml.
+
+Q34. Which TBI tests require laboratory processing?
+A34. QGIT and T-SPOT.TB (both IGRA tests). TST does not require a lab.
+
+Q35. What is the cost category for TST vs IGRA tests?
+A35. TST is "Low" cost; both IGRA tests (QGIT and T-SPOT.TB) are "High" cost.
+
+Q36. Does BCG vaccination affect the specificity of IGRA tests?
+A36. No — IGRA tests have high specificity even in BCG-vaccinated individuals.
+     TST, by contrast, has low specificity in BCG-vaccinated persons.
+
+Q37. Within what time must blood reach the laboratory for the QuantiFERON test?
+A37. Within 8–30 hours of collection.
+
+------------------------------------------------------------------------
+SECTION E — RISK GROUPS
+------------------------------------------------------------------------
+
+Q38. How many risk groups are defined in the database?
+A38. Ten risk groups.
+
+Q39. Which risk groups do NOT require a TBI test before TPT initiation?
+A39. PLHIV-ADL (PLHIV adults & adolescents), PLHIV-INF (HIV+ infants <12m),
+     and HHC-U5 (Household contacts <5 years).
+
+Q40. What is the TPT strategy for Household Contacts <5 years (HHC-U5)?
+A40. TPT after ruling out active TB — no TBI test required. TPT must not be
+     deferred in the absence of CXR or TBI test results.
+
+Q41. What is the TPT strategy for PLHIV adults?
+A41. TPT is given to all PLHIV after ruling out active TB disease via a
+     4-symptom screen (cough, fever, weight loss, night sweats) ± CXR.
+
+Q42. What regimen is prescribed for contacts of DR-TB (MDR/RR FQ-sensitive) patients?
+A42. 6Lfx (Six months daily Levofloxacin).
+
+Q43. What regimen is prescribed for contacts of H-resistant R-sensitive (Hr-TB) patients?
+A43. 4R (Four months daily Rifampicin).
+
+Q44. Which risk groups require TBI testing AND have a priority level of 2?
+A44. HHC-5PLUS, IMMUNO-SUPP, SILICOSIS, DIALYSIS, PRE-TRANS,
+     DRTB-HHC, and HRTB-HHC — all have priority_level = 2 and
+     tbi_test_required = TRUE.
+
+------------------------------------------------------------------------
+SECTION F — ADVERSE EVENTS
+------------------------------------------------------------------------
+
+Q45. Which adverse events related to Isoniazid require stopping TPT
+     (stop_tpt = TRUE)?
+A45. Drug-induced hepatitis, Convulsions, Pellagra, and Psychosis.
+
+Q46. What is the management action for Isoniazid-induced peripheral neuropathy?
+A46. Prescribe Pyridoxine 100–200 mg/day and consider stopping Isoniazid.
+
+Q47. What is the clinical management when ALT is ≥5× ULN (without symptoms)
+     in a patient on Isoniazid?
+A47. Stop all drugs and wait for resolution before re-challenging.
+
+Q48. Which Rifampicin adverse events require stopping TPT?
+A48. Hepatitis, Thrombocytopenic purpura, Acute renal failure,
+     and Haemolytic anaemia.
+
+Q49. What is the management for Rifapentine-induced hypersensitivity / flu-like
+     syndrome?
+A49. Mild: continue and observe. Moderate-Severe: switch to 6H regimen.
+
+Q50. Which Levofloxacin adverse events are classified as 'Rare'?
+A50. Clostridium difficile diarrhoea, Tendon rupture (Achilles), and
+     QTc prolongation / arrhythmia — all require stopping Levofloxacin.
+
+Q51. What is the recommended action for Rifampicin-induced discolouration
+     of body fluids?
+A51. Reassure the patient — it is cosmetic only and not harmful.
+
+------------------------------------------------------------------------
+SECTION G — DRUG-DRUG INTERACTIONS
+------------------------------------------------------------------------
+
+Q52. How many drug-drug interaction records are in the database?
+A52. 16 interactions (5 for Isoniazid, 11 for Rifamycin).
+
+Q53. Does Isoniazid increase or decrease levels of Warfarin?
+A53. Isoniazid increases Warfarin levels. INR should be monitored closely.
+
+Q54. Why is Rifamycin contraindicated with Protease Inhibitors (PIs)?
+A54. Rifamycin significantly decreases PI levels. Rifabutin is the
+     recommended alternative.
+
+Q55. What is the clinical advice when Rifamycin-based TPT is used alongside
+     hormonal contraceptives?
+A55. Use barrier contraception or DMPA while on rifamycin-based TPT, as
+     rifamycin decreases effectiveness of ethinyl oestradiol / levonorgestrel.
+
+Q56. Can Isoniazid interact with anti-epileptic drugs? Which ones?
+A56. Yes — Isoniazid increases levels of Phenytoin, Carbamazepine,
+     Primidone, and Valproic acid. Anticonvulsant levels should be monitored.
+
+Q57. Which antiretroviral is acceptable to use with Rifamycin-based TPT
+     (with a dose adjustment)?
+A57. Raltegravir (RAL) — the dose should be increased to 800 mg twice daily
+     when taken with Rifampicin.
+
+Q58. What interaction does Rifamycin have with methadone / buprenorphine?
+A58. Rifamycin decreases their levels, risking opioid withdrawal. The OST
+     dose should be increased and the patient closely monitored.
+
+------------------------------------------------------------------------
+SECTION H — TREATMENT OUTCOME TYPES
+------------------------------------------------------------------------
+
+Q59. What dose completion threshold defines "Treatment Completed" for 3HP?
+A59. ≥90% of doses within 133% of the planned duration, with the person
+     remaining well.
+
+Q60. What dose completion threshold defines "Treatment Completed" for 6H/6Lfx/4R?
+A60. ≥80% of doses within 133% of the planned duration.
+
+Q61. What is the definition of "Lost to Follow-up" (LTFU) for the 3HP regimen?
+A61. TPT interrupted for ≥4 consecutive weeks.
+
+Q62. What is the LTFU definition for 6H / 6Lfx regimens?
+A62. TPT interrupted for ≥8 consecutive weeks.
+
+Q63. What does the outcome code "DISC_TOX" mean?
+A63. Discontinued due to Toxicity — TPT permanently discontinued by the
+     treating doctor due to adverse events or drug-drug interactions.
+
+Q64. Under what circumstance is "Not Evaluated" (NOT_EVAL) assigned?
+A64. When the outcome is not assessable — e.g., records lost or patient
+     transferred without documentation.
+
+------------------------------------------------------------------------
+SECTION I — SUPPLY CHAIN
+------------------------------------------------------------------------
+
+Q65. How many levels exist in the supply chain?
+A65. Five levels: Treatment Supporter, Health Facility Store, TU Drug Store,
+     DTC Drug Store, and State Drug Store (SDS) / GMSD/CMSS.
+
+Q66. What is the buffer stock requirement at Health Facility level?
+A66. 2 months buffer (Reserve = 2 × total TPT beneficiaries on full course).
+
+Q67. From where does the DTC Drug Store receive replenishment?
+A67. From the State Drug Store (SDS), on a quarterly basis.
+
+Q68. What is the buffer at the State Drug Store (SDS) level?
+A68. 3 months buffer.
+
+Q69. Which facility has the largest stock of 6H courses as of 2024-03-01?
+A69. Sion ART Centre (HF-LKO-002 equivalent: HF-ID 3) with 40 full courses
+     in stock (batch GMSD-6H-2402, expiry 2026-01-31).
+
+Q70. Which regimen stock at the Raipur DR-TB Centre has the earliest expiry?
+A70. 6Lfx stock (batch GMSD-LFX-2401) expires 2025-06-30, making it the
+     earliest among the facility's stocked regimens.
+
+------------------------------------------------------------------------
+SECTION J — MONITORING INDICATORS
+------------------------------------------------------------------------
+
+Q71. How many monitoring indicators are defined?
+A71. Seven indicators.
+
+Q72. What is the target percentage for TPT Coverage (TPT-COV)?
+A72. 90%.
+
+Q73. What is the target for Contact Investigation Coverage (CONT-INV-COV)?
+A73. 100%.
+
+Q74. Which indicator does NOT have a defined target percentage?
+A74. TPT Breakdown Rate to Active TB (TPT-BREAK) has no target (NULL),
+     and is reported quarterly rather than monthly.
+
+Q75. Define the numerator for the indicator "PLHIV TPT Coverage" (PLHIV-TPT-COV).
+A75. Newly enrolled PLHIV initiated on TPT after ruling out active TB.
+
+Q76. What does the indicator "POST-TPT-FU" measure?
+A76. Post-TPT Follow-up Coverage — the proportion of individuals who completed
+     TPT and received a follow-up assessment at the scheduled intervals
+     (6, 12, 18, and 24 months).
+
+Q77. What was the TPT Coverage result (%) for Mumbai (District 1, HF-MUM-001)
+     in Q1 2024?
+A77. 88.89% (numerator 16, denominator 18 → 16/18 × 100 ≈ 88.89%).
+
+Q78. What was the Contact Investigation Coverage for Central Delhi in Q1 2024?
+A78. 91.67% (numerator 55, denominator 60 → 55/60 × 100 ≈ 91.67%).
+
+------------------------------------------------------------------------
+SECTION K — SAMPLE PERSONS & CLINICAL SCENARIOS
+------------------------------------------------------------------------
+
+Q79. What is the Nikshay ID of the index TB patient from Delhi?
+A79. NK-DL-009988 (Sunita Sharma).
+
+Q80. What is the HIV status of Ramesh Patil (index patient, Mumbai)?
+A80. HIV Negative.
+
+Q81. How old is Priya Patil (DOB: 2019-06-05) as of January 2024, and in
+     which risk group does she fall?
+A81. She would be approximately 4 years old — falling into the HHC-U5
+     (Household Contacts <5 years) risk group.
+
+Q82. What is the contact type and relationship of Anjali Mehra to the
+     Delhi index patient?
+A82. Anjali Mehra is a Close contact (non-household) and the relationship
+     is listed as "Friend" to Sunita Sharma.
+
+Q83. Was a home visit done for Anjali Mehra?
+A83. No — home_visit_done is FALSE for Anjali's contact record.
+
+Q84. What was the TB screening outcome for Priya Patil (child <5)?
+A84. "Eligible for TPT" — no symptoms were present, and no CXR was done.
+
+Q85. What was the TBI test result for Suresh Patil (adult HHC)?
+A85. Positive TST with an induration of 14 mm (tested on 2024-01-22,
+     result on 2024-01-24).
+
+Q86. Which regimen was recommended for Suresh Patil after TBI testing, and why?
+A86. 3HP was recommended because he is a Household Contact ≥5 years (HHC-5PLUS)
+     with a positive TBI test and normal CXR.
+
+Q87. Which regimen was prescribed to Priya Patil, and was pyridoxine included?
+A87. 6H was prescribed (regimen_id = 1). Pyridoxine was prescribed at
+     10 mg/day because she is a young child.
+
+Q88. What adherence method is used for Suresh Patil's TPT?
+A88. 99DOTS (digital adherence monitoring). He is self-supported.
+
+Q89. What is the current status of Suresh Patil's TPT enrolment?
+A89. Completed — he completed 3HP by 2024-04-25 with outcome "Treatment
+     Completed" (outcome_id = 1).
+
+Q90. What adherence method is used for Anjali Mehra (PLHIV contact)?
+A90. Tele-Video Call, with support from herself and an ART counsellor.
+
+Q91. What was Priya Patil's adherence percentage at her Month-2 follow-up
+     (2024-03-24)?
+A91. 98.41% (62 doses taken out of a planned ~63).
+
+Q92. Was any adverse event noted during Suresh Patil's follow-up visits?
+A92. No — ae_noted was FALSE at both his follow-up visits (Feb and Mar 2024).
+
+Q93. What was Suresh Patil's weight at his second follow-up visit?
+A93. 72.0 kg (visit on 2024-03-26, by TBHV Rakesh).
+
+Q94. What was the adherence percentage for Suresh Patil at his Month-1 follow-up?
+A94. 33.33% — only 4 of 12 planned 3HP doses had been taken by 2024-02-26.
+     (This was an early visit; subsequent compliance led to completion.)
+
+Q95. Which healthcare worker conducted Anjali Mehra's follow-up visit in
+     March 2024?
+A95. ART Counsellor Priti.
+
+------------------------------------------------------------------------
+SECTION L — VIEWS & DATABASE DESIGN
+------------------------------------------------------------------------
+
+Q96. What three views are created in the schema?
+A96. v_active_tpt_enrolments (active enrolments with patient/regimen details),
+     v_tpt_cascade_district (TPT care cascade per district), and
+     v_drug_interactions_summary (drug interaction lookup).
+
+Q97. What is the purpose of the view v_tpt_cascade_district?
+A97. It provides a step-wise summary per district of the TPT care cascade:
+     contacts enumerated → screened → TBI tested → eligible → initiated →
+     completed.
+
+Q98. How is the result_pct column in indicator_reports calculated?
+A98. It is a STORED generated column:
+     ROUND((numerator_value / denominator_value) × 100, 2), with a result of
+     0 when denominator is 0.
+
+Q99. How is the duration_days column in treatment_interruptions computed?
+A99. It is a STORED generated column calculated as:
+     (interruption_end - interruption_start) cast to SMALLINT.
+
+Q100. What indexes are created on the tpt_enrolments table, and why?
+A100. Three indexes:
+      idx_enrolment_person  — on person_id (fast lookup of a person's enrolments)
+      idx_enrolment_regimen — on regimen_id (filter/join by regimen)
+      idx_enrolment_status  — on current_status (filter active/completed cases)
+
+========================================================================
+SECTION M — DESCRIPTIVE / LONG-ANSWER QUESTIONS
+========================================================================
+
+DQ1. Describe the complete administrative hierarchy used in the PMTPT
+     database to organize TB services in India, from the national level
+     down to the patient. What tables represent each level, and how are
+     they linked?
+
+A-DQ1.
+     The PMTPT database mirrors India's public health administrative
+     structure through a chain of related tables:
+
+     1. STATES (states table)
+        The topmost geographic unit. Each state has a unique state_code
+        (e.g., 'MH' for Maharashtra, 'UP' for Uttar Pradesh) and a region
+        label (North, South, East, West, Central). Ten states/UTs are seeded.
+
+     2. DISTRICTS (districts table)
+        Each district belongs to a state via the state_id foreign key.
+        15 districts are seeded, e.g., Mumbai and Pune under Maharashtra,
+        Lucknow and Varanasi under Uttar Pradesh.
+
+     3. TB UNITS / TUs (tb_units table)
+        TB Units are intermediate administrative units that sit between the
+        district and the health facility. Each TU belongs to a district via
+        district_id. Eight TUs are seeded, e.g., "Lucknow TU-1" under the
+        Lucknow district.
+
+     4. HEALTH FACILITIES (health_facilities table)
+        Individual service-delivery points such as HWCs, PHCs, CHCs, ART
+        Centres, DR-TB Centres, and private clinics. Each facility links to
+        a TU (tu_id) and a district (district_id). Facility capabilities are
+        captured as boolean flags: is_tbi_testing, is_igra_available,
+        is_xray_available.
+
+     5. PERSONS (persons table)
+        Individuals registered in the system — index TB patients, household
+        contacts, and high-risk persons. Each person is linked to a district
+        and to the health facility where they registered (registered_at).
+
+     6. INDEX TB PATIENTS & CONTACTS
+        (index_tb_patients and contacts tables)
+        Index patients are notified TB cases. Their contacts are enumerated
+        in the contacts table, linking a contact person to an index patient
+        via index_patient_id.
+
+     7. CLINICAL TABLES (screenings, TBI tests, eligibility, enrolments,
+        dose records, follow-up visits)
+        These form the patient-level care cascade, each referencing
+        person_id and hf_id.
+
+     The hierarchy thus flows:
+     State → District → TB Unit → Health Facility → Person → Clinical Data.
+     Foreign key constraints enforce this at every step, ensuring referential
+     integrity across the entire cascade.
+
+------------------------------------------------------------------------
+
+DQ2. Compare all four TPT regimens (6H, 3HP, 6Lfx, 4R) available in the
+     database. For each, discuss the drugs used, duration, dosing frequency,
+     total doses, completion threshold, key indications, and major
+     contraindications.
+
+A-DQ2.
+
+  ┌──────────┬──────────────────────────┬──────────────────────────────┐
+  │ Regimen  │ 6H                       │ 3HP                          │
+  ├──────────┼──────────────────────────┼──────────────────────────────┤
+  │ Drug(s)  │ Isoniazid (H)            │ Isoniazid (H) + Rifapentine  │
+  │ Duration │ 6 months                 │ 3 months                     │
+  │ Frequency│ Daily                    │ Weekly                       │
+  │ Doses    │ 180                      │ 12                           │
+  │ Threshold│ 80%                      │ 90%                          │
+  │ Extended │ 239 days                 │ 120 days                     │
+  ├──────────┼──────────────────────────┼──────────────────────────────┤
+  │ 6Lfx     │ Levofloxacin (Lfx)       │ 4R: Rifampicin (R)           │
+  │ Duration │ 6 months                 │ 4 months                     │
+  │ Frequency│ Daily                    │ Daily                        │
+  │ Doses    │ 180                      │ 120                          │
+  │ Threshold│ 80%                      │ 80%                          │
+  │ Extended │ 239 days                 │ 160 days                     │
+  └──────────┴──────────────────────────┴──────────────────────────────┘
+
+  6H (Six months Isoniazid):
+     The most widely used regimen, safe in pregnancy and for all age groups
+     including infants >12 months. Indicated for PLHIV (adults and children),
+     HIV+ infants <12 months in TB contact, household contacts <5 years, and
+     most other risk groups. Maximum adult dose is 300 mg/day. Pyridoxine
+     must be co-prescribed for at-risk groups to prevent peripheral neuropathy.
+     Contraindicated in active TB disease, acute/chronic hepatitis, and
+     allergy to isoniazid.
+
+  3HP (Three months weekly Isoniazid + Rifapentine):
+     A shorter, weekly regimen associated with higher completion rates
+     compared to 6H. Indicated for persons ≥2 years who are household
+     contacts of DS-TB patients and PLHIV not on PI/NVP/TAF-based ART.
+     Should ideally be taken with food and under direct observation.
+     Contraindicated in pregnancy, PI-based ART, Nevirapine, TAF, and
+     children <2 years. Causes orange discolouration of secretions, which
+     is cosmetic and harmless.
+
+  6Lfx (Six months Levofloxacin):
+     A second-line regimen used specifically for contacts of MDR-TB/RR-TB
+     patients where the index patient has a fluoroquinolone-sensitive strain.
+     Adult dose varies by weight: 750 mg if <45 kg, 1000 mg if ≥45 kg.
+     Paediatric dispersible 100 mg tablets are available with weight-banded
+     dosing. Contraindicated where FQ resistance is confirmed. Clinicians
+     should monitor for Achilles tendon pain and joint abnormalities in
+     children.
+
+  4R (Four months Rifampicin):
+     Indicated for household contacts of H-resistant, R-sensitive (Hr-TB)
+     index patients. Maximum adult dose is 600 mg/day. Evidence in children
+     0–14 years is currently limited to specific geographies for evidence
+     generation only. Contraindicated in pregnancy, Nevirapine-based ART,
+     and PI-based ART due to significant drug-drug interactions.
+
+  Key comparison point: 3HP has the highest completion threshold (90%) but
+  the shortest total duration (12 weeks). 6H and 6Lfx are the longest
+  regimens at 6 months. 4R and 3HP both use rifamycins and therefore share
+  many contraindications (pregnancy, certain ARTs).
+
+------------------------------------------------------------------------
+
+DQ3. Trace the complete TPT care cascade for Priya Patil (child <5 years,
+     household contact of Ramesh Patil) from contact enumeration through
+     to active treatment follow-up, citing all relevant tables and data
+     points from the database.
+
+A-DQ3.
+     Priya Patil (Nikshay ID: NK-MH-001235, DOB: 2019-06-05) was enrolled
+     at Dharavi HWC (HF-MUM-001) in Mumbai, Maharashtra.
+
+     STEP 1 — Index Case Notification
+     Her father, Ramesh Patil (NK-MH-001234), was notified as a
+     Pulmonary-Bacteriologically Confirmed TB case on 2024-01-15 at Dharavi
+     HWC (index_tb_patients table). He was DS-TB (H-resistant: FALSE,
+     R-resistant: FALSE), making him a standard DS-TB index case.
+
+     STEP 2 — Contact Enumeration (contacts table)
+     Priya was enumerated on 2024-01-22 as a Household contact with
+     relationship "Child". A home visit was completed (home_visit_done = TRUE)
+     by the staff of Dharavi HWC.
+
+     STEP 3 — TB Screening (tb_screenings table)
+     On 2024-01-22, Priya was screened at Dharavi HWC. All four TB symptoms
+     (cough, fever, weight loss, night sweats) were ABSENT. No chest X-ray
+     was done (cxr_done = FALSE, cxr_result = 'Not Available'). The
+     screening outcome was "Eligible for TPT" — consistent with the HHC-U5
+     guideline that TBI testing and CXR are not mandatory for children <5
+     years.
+
+     STEP 4 — TBI Test
+     No TBI test was conducted for Priya. This is correct per the HHC-U5
+     risk group strategy (tbi_test_required = FALSE).
+
+     STEP 5 — Eligibility Assessment (tpt_eligibility_assessments table)
+     On 2024-01-23, Dr Desai (CHO, Dharavi HWC) assessed Priya. Active TB
+     was excluded (active_tb_excluded = TRUE). She was assigned to risk
+     group HHC-U5 (group_id = 3). The recommended regimen was 6H
+     (recommended_regimen = 1) and she was declared eligible (is_eligible =
+     TRUE). No TBI test result was linked (tbi_test_result_id = NULL).
+
+     STEP 6 — TPT Enrolment (tpt_enrolments table)
+     TPT started on 2024-01-24 at Dharavi HWC. Regimen: 6H (regimen_id = 1).
+     Weight at enrolment: 14.0 kg. Planned end date: 2024-07-23. Extended
+     end date (133% rule): 2024-09-19. Pyridoxine was prescribed at 10 mg.
+     Treatment supporter: Rekha Patil (her mother). Adherence method: Direct
+     Observation. Counselling was completed. Current status: Active.
+
+     STEP 7 — Follow-up Visits (followup_visits table)
+     - Month 1 (2024-02-24): Weight 14.2 kg. No TB symptoms. No adverse
+       events. 30 doses taken. Adherence: 96.77%. Visited by ASHA Meena.
+     - Month 2 (2024-03-24): Weight 14.5 kg. No TB symptoms. No adverse
+       events. 62 doses taken. Adherence: 98.41%. Visited by ASHA Meena.
+
+     SUMMARY: Priya progressed through every step of the cascade correctly,
+     with no TBI testing (as per guidelines), no adverse events, and
+     excellent adherence (>96% at both visits). As of the last recorded
+     visit, she remains on Active 6H treatment.
+
+------------------------------------------------------------------------
+
+DQ4. A new patient on Rifamycin-based TPT is also taking oral contraceptives,
+     Warfarin, and Nevirapine-based ART. Using the drug_interactions table,
+     explain the clinical risks for each co-medication and what actions
+     should be taken.
+
+A-DQ4.
+
+     Rifamycin is a potent inducer of cytochrome P450 enzymes and affects
+     multiple co-medications. Based on the drug_interactions seed data:
+
+     1. ORAL CONTRACEPTIVES (Ethinyl oestradiol / Levonorgestrel)
+        Effect: Rifamycin DECREASES contraceptive efficacy.
+        Risk: The patient is at high risk of unintended pregnancy if relying
+        on oral contraceptive pills while on a rifamycin-containing regimen
+        (3HP or 4R).
+        Action: Switch to barrier contraception (condoms) or DMPA
+        (depot medroxyprogesterone acetate) for the duration of rifamycin-
+        based TPT. Resume oral contraceptives only after completing the
+        rifamycin course.
+
+     2. WARFARIN (Anticoagulant)
+        Effect: Isoniazid INCREASES Warfarin levels (risk of bleeding).
+        Note: Rifamycin actually decreases Warfarin in general, but the
+        database specifically records Isoniazid increasing it.
+        Risk: If on a combination regimen (3HP = H + Rifapentine), there
+        are opposing interactions. INR can become unpredictable.
+        Action: Monitor INR closely and frequently throughout the TPT
+        course. Dose adjustment of Warfarin will likely be needed. Coordinate
+        with the anticoagulation team.
+
+     3. NEVIRAPINE (NVP)-BASED ART
+        Effect: Rifamycin DECREASES Nevirapine levels significantly.
+        Risk: Sub-therapeutic NVP levels can lead to virological failure
+        and development of HIV drug resistance — a serious clinical concern
+        in a PLHIV patient.
+        Action: The combination is CONTRAINDICATED. Rifampicin- or
+        Rifapentine-containing regimens (3HP, 4R) must NOT be used in
+        patients on Nevirapine. The recommended alternative is the 6H
+        regimen (Isoniazid alone), which does not interact significantly
+        with Nevirapine. The ART team should be informed and involved in
+        the decision.
+
+     OVERALL CLINICAL DECISION:
+     Given the Nevirapine-based ART, the patient is ineligible for 3HP or
+     4R. The only safe TPT option is 6H. The oral contraceptive interaction
+     with rifamycin is therefore moot (since 6H contains no rifamycin), but
+     warfarin interaction with Isoniazid must still be monitored. A multidis-
+     ciplinary approach involving TB, HIV, and anticoagulation services is
+     essential.
+
+------------------------------------------------------------------------
+
+DQ5. Explain the complete supply chain structure for TPT drugs as modelled
+     in the database. Describe each level, its buffer stock requirement,
+     replenishment source, and how the system ensures uninterrupted supply
+     to the patient.
+
+A-DQ5.
+     The supply chain is modelled in two tables: supply_chain_levels (the
+     structural levels) and drug_stock (actual inventory at each facility).
+     The chain has five levels, flowing from central procurement down to
+     the individual patient:
+
+     LEVEL 1 — GMSD / CMSS (Government Medical Store Depot / Central
+     Medical Services Society)
+        Buffer: 0 months (this is the central procurement authority).
+        Role: Procures drugs at the national level through Central TB
+        Division / MoHFW. Supplies the State Drug Stores.
+
+     LEVEL 2 — STATE DRUG STORE (SDS)
+        Buffer: 3 months.
+        Replenishment: From GMSD/CMSS.
+        Calculation: (Quarterly consumption ÷ 3) × 11, minus all lower
+        level stocks. The large multiplier (11) ensures a broad buffer to
+        cover the entire state's needs and accommodate delays.
+
+     LEVEL 3 — DTC DRUG STORE (District TB Centre)
+        Buffer: 3 months.
+        Replenishment: Quarterly from the SDS.
+        Calculation: (Quarterly consumption ÷ 3) × 8, minus existing stocks.
+
+     LEVEL 4 — TU DRUG STORE (TB Unit)
+        Buffer: 2 months.
+        Replenishment: Quarterly from the DTC.
+        Calculation: (Quarterly consumption ÷ 3) × 5, minus existing stocks.
+
+     LEVEL 5 — HEALTH FACILITY STORE
+        Buffer: 2 months.
+        Replenishment: Monthly from the TU Drug Store.
+        Reserve calculation: 2 × total TPT beneficiaries currently on a
+        full course. This ensures each active patient's treatment is secured
+        for at least two months even if replenishment is delayed.
+
+     LEVEL 6 — TREATMENT SUPPORTER (Patient/Caregiver)
+        Buffer: 0 (no buffer — issued per beneficiary as needed).
+        The full TPT course is issued to the treatment supporter or patient
+        at initiation to enable uninterrupted self-administration.
+
+     The drug_stock table records actual inventory per health facility
+     (hf_id), regimen (regimen_id), and supply chain level (level_id), with
+     fields for full courses in stock, batch number, and expiry date. This
+     enables real-time stock visibility and expiry monitoring at every point.
+
+     The database seed data shows, for example, Dharavi HWC (HF-MUM-001)
+     holding 25 courses of 6H and 15 courses of 3HP as of 2024-03-01, while
+     Sion ART Centre holds 40 courses of 6H — the largest stock of any
+     single regimen across all seeded facilities.
+
+------------------------------------------------------------------------
+
+DQ6. Discuss how the PMTPT database supports monitoring and evaluation of
+     the TB Preventive Treatment programme. Describe each of the seven
+     monitoring indicators, their targets, how they are calculated using
+     the indicator_reports table, and what the Q1 2024 data tells us about
+     programme performance in Mumbai and Central Delhi.
+
+A-DQ6.
+
+     The monitoring framework uses two tables — monitoring_indicators
+     (definitions and targets) and indicator_reports (actual reported data).
+     The result_pct is a STORED GENERATED COLUMN computed automatically as
+     (numerator ÷ denominator) × 100, ensuring calculation consistency.
+
+     THE SEVEN INDICATORS:
+
+     1. CONT-INV-COV — Contact Investigation Coverage (Target: 100%)
+        Measures what fraction of pulmonary TB patient contacts completed
+        evaluation for TB disease and TB infection. A 100% target reflects
+        the goal of leaving no contact unevaluated. Reported monthly.
+
+     2. TPT-COV — TPT Coverage (Target: 90%)
+        Measures what fraction of eligible individuals actually initiated
+        TPT. Tracks the conversion from eligibility to treatment start.
+        Reported monthly.
+
+     3. TPT-COMP — TPT Completion Rate (Target: 90%)
+        Tracks what fraction of those who started TPT successfully
+        completed it. Low completion can indicate adherence challenges,
+        toxicity, or inadequate follow-up. Reported monthly.
+
+     4. TPT-BREAK — Breakdown Rate to Active TB (No target set)
+        Monitors how many TPT beneficiaries developed active TB during or
+        within 24 months after completing TPT. This is a key outcome
+        indicator of programme effectiveness. Reported quarterly (NULL
+        target in the database — it is a surveillance metric, not a
+        performance benchmark).
+
+     5. PLHIV-TPT-COV — PLHIV TPT Coverage (Target: 90%)
+        Specifically tracks TPT initiation among newly enrolled PLHIV after
+        ruling out active TB. PLHIV are the highest-priority group, so this
+        indicator is tracked separately. Reported monthly.
+
+     6. U5-TPT-COMP — Under-5 HHC TPT Completion (Target: 90%)
+        Tracks completion specifically for children <5 years who are
+        household contacts — the most vulnerable paediatric group.
+        Reported monthly.
+
+     7. POST-TPT-FU — Post-TPT Follow-up Coverage (Target: 90%)
+        Measures whether individuals who completed TPT receive scheduled
+        follow-up assessments at 6, 12, 18, and 24 months post-completion.
+        This is critical for early detection of TB breakdown. Monthly.
+
+     Q1 2024 PERFORMANCE ANALYSIS (from indicator_reports seed data):
+
+     Mumbai (District: Mumbai / HF: Dharavi HWC):
+     - Contact Investigation Coverage: 18/20 = 90.00%
+       → Below the 100% target. Two contacts were not fully evaluated.
+     - TPT Coverage: 16/18 = 88.89%
+       → Slightly below the 90% target. Two eligible individuals did not
+          initiate TPT.
+     - TPT Completion Rate: 5/6 = 83.33%
+       → Below the 90% target. One patient did not complete treatment.
+          This warrants investigation into reasons for non-completion.
+
+     Central Delhi (District: Central Delhi / HF: GTB Hospital):
+     - Contact Investigation Coverage: 55/60 = 91.67%
+       → Below the 100% target. Five contacts were not evaluated, which
+          in an absolute sense represents potential missed TB infection.
+     - TPT Coverage: 49/55 = 89.09%
+       → Just below the 90% target. Six eligible individuals did not
+          initiate TPT.
+
+     OVERALL INTERPRETATION:
+     Both sites are performing close to but not yet at their targets. The
+     most significant gap is in Contact Investigation Coverage, which has
+     a 100% target — any uncovered contact represents a missed prevention
+     opportunity. Programme managers should investigate whether the gaps
+     are due to refusal, loss to tracking, or system lapses, and use the
+     v_tpt_cascade_district view to identify exactly where patients are
+     being lost at each step of the cascade.
+
+------------------------------------------------------------------------
+
+DQ7. Compare the TST (Mantoux) and IGRA tests as modelled in the tbi_tests
+     table. Discuss their respective positive cut-offs, sensitivity,
+     specificity, cost, operational requirements, and the clinical situations
+     in which each would be preferred in an Indian programmatic context.
+
+A-DQ7.
+
+     The database catalogues three TBI diagnostic tests: TST, QGIT (an
+     IGRA), and T-SPOT.TB (another IGRA). Here is a detailed comparison:
+
+     TST — Tuberculin Skin Test (Mantoux):
+     - Positive cut-off: ≥5 mm in PLHIV; ≥10 mm in immunocompetent adults;
+       ≥6 mm increase at follow-up.
+     - Type: TST. Does NOT require a laboratory (requires_lab = FALSE).
+     - Cost: Low.
+     - Sensitivity: High.
+     - Specificity: Low in BCG-vaccinated individuals (a significant
+       limitation in India where BCG vaccination at birth is universal).
+     - Operational notes: Requires an intradermal PPD injection, cold chain
+       for tuberculin storage, and a trained reader at 48–72 hours. It is
+       field-friendly once cold chain is maintained.
+     - Preferred when: Resources are limited, laboratory capacity is absent
+       (e.g., Sub-Centres, HWCs), or for large-scale programmatic screening
+       in settings without IGRA access. Despite lower specificity in BCG-
+       vaccinated populations, its low cost and no-lab requirement make it
+       the default test in most public health facilities in India.
+
+     QGIT — QuantiFERON-Gold In-Tube:
+     - Positive cut-off: ≥0.35 IU/ml (ELISA-based reading).
+     - Type: IGRA. Requires laboratory (requires_lab = TRUE).
+     - Cost: High.
+     - Sensitivity: High.
+     - Specificity: High, even in BCG-vaccinated persons — a major
+       advantage over TST in India.
+     - Operational notes: Blood must reach the laboratory within 8–30 hours
+       of collection. Requires ELISA reading capacity. Not affected by
+       BCG vaccination, so false positives due to BCG are eliminated.
+     - Preferred when: BCG vaccination history could confound TST results,
+       in higher-resource facilities (Medical Colleges, Corporate Hospitals,
+       ART Centres with IGRA capacity), or for immunocompromised patients
+       where accurate TBI detection is critical. In the database, IGRA is
+       available at KEM Hospital, GTB Hospital, SAT Hospital ART Centre,
+       KGMU ART Centre, NIRT Chennai, Victoria Hospital, and Apollo
+       Hospital Delhi — all higher-tier public or private institutions.
+
+     T-SPOT.TB:
+     - Positive cut-off: Spot count ≥6 on ESAT-6 or CFP-10 antigen plate.
+     - Type: IGRA. Requires laboratory.
+     - Cost: High.
+     - Sensitivity: High.
+     - An alternative IGRA measuring IFN-γ secreting T-lymphocytes.
+       High specificity like QGIT, not affected by BCG.
+     - Preferred in situations where QGIT is indeterminate or unavailable,
+       or as an alternative in reference laboratories.
+
+     PROGRAMMATIC CONTEXT IN INDIA:
+     Under NTEP/PMTPT guidelines, TST is the primary TBI test at the field
+     level due to its low cost and no laboratory requirement. IGRA (either
+     QGIT or T-SPOT.TB) is recommended as a confirmatory or alternative test
+     in facilities that have the capacity, particularly for PLHIV and
+     immunocompromised patients where TST specificity is most problematic.
+     The database accurately reflects this two-tier reality: most public
+     facilities (HWCs, PHCs, Sub-Centres) have is_tbi_testing = TRUE but
+     is_igra_available = FALSE, while Medical Colleges and ART Centres have
+     both.
+
+------------------------------------------------------------------------
+
+DQ8. Examine the treatment interruption management rules embedded in the
+     database schema. For each of the four management actions recorded in
+     the treatment_interruptions table, describe the clinical scenario in
+     which each would apply, drawing on the treatment outcome definitions
+     and regimen-specific LTFU thresholds.
+
+A-DQ8.
+
+     The treatment_interruptions table records each interruption event with
+     fields for start date, end date, duration (auto-calculated in days),
+     doses taken before interruption, percentage of doses taken, and the
+     management_action chosen. The four allowed actions are:
+
+     1. RESUME
+        Clinical scenario: The patient interrupted TPT for a short period —
+        below the LTFU threshold — and the interruption is now over. For 6H
+        and 6Lfx, this means the gap was less than 8 consecutive weeks. For
+        3HP and 4R, less than 4 consecutive weeks. Active TB has been ruled
+        out. The patient can simply continue from where they left off, without
+        restarting the full course, provided the total treatment duration does
+        not exceed the extended duration (133% of the planned duration).
+        Example: A 6H patient who missed 3 weeks due to travel resumes
+        treatment on return.
+
+     2. RESTART FULL COURSE
+        Clinical scenario: The patient's gap exceeded the LTFU threshold
+        (≥8 weeks for 6H/6Lfx or ≥4 weeks for 3HP/4R), but upon re-
+        evaluation, they do not have active TB and are still willing and able
+        to complete TPT. Rather than abandoning treatment entirely, the
+        clinician decides a fresh full course is warranted — especially if
+        a low number of doses were taken before the interruption (e.g.,
+        <20% of planned doses). This ensures the patient receives an
+        adequate protective course.
+        Example: A 3HP patient who missed 6 weeks early in treatment (only
+        2–3 doses taken) restarts the full 12-dose course.
+
+     3. SWITCH REGIMEN
+        Clinical scenario: The interruption was caused by an adverse event
+        to the current regimen, or a new drug interaction has been identified
+        that makes continuation of the original regimen unsafe or
+        contraindicated. The patient is willing to continue TPT but on a
+        different regimen. The alternative_regimen field in the
+        adverse_event_reports table would also document this.
+        Example: A patient on 3HP develops moderate flu-like hypersensitivity
+        to Rifapentine; treatment is interrupted and then switched to 6H.
+        Or: A 4R patient becomes pregnant — a contraindication for
+        Rifampicin — so treatment is switched to 6H.
+
+     4. DISCONTINUE
+        Clinical scenario: Continuation of TPT in any form is no longer
+        appropriate or safe. This may be because:
+        (a) The patient developed confirmed active TB disease (outcome code:
+            FAILED), requiring full TB treatment instead of preventive therapy.
+        (b) A serious, life-threatening adverse event occurred (e.g.,
+            drug-induced hepatitis, QTc prolongation) that precludes
+            any further TPT.
+        (c) The patient has exceeded the extended duration limit (133% of
+            planned duration) and cannot be considered to have completed
+            treatment, but restarting is also not appropriate.
+        (d) The patient refuses further treatment after counselling.
+        In all these cases, the enrolment outcome would be set to DISC_TOX,
+        FAILED, DIED, or LTFU depending on the specific reason.
+        Example: A 6Lfx patient develops Achilles tendon rupture — a Rare,
+        stop_tpt = TRUE adverse event — and TPT is permanently discontinued.
+
+     THE IMPORTANCE OF pct_doses_taken:
+     The field pct_doses_taken in treatment_interruptions captures what
+     fraction of doses had been taken before the interruption. This is
+     critical for the Resume vs Restart decision: if the patient had already
+     taken ≥80% (or ≥90% for 3HP) of doses before interrupting, they may
+     qualify for "Treatment Completed" status regardless of the gap. If
+     far fewer doses were taken, restarting is more clinically justified.
+
+------------------------------------------------------------------------
+
+DQ9. Describe the role and structure of the three database views defined
+     in the schema. For each view, explain the tables it joins, what
+     information it surfaces, and give a practical example of how a district
+     TB officer or programme manager would use it in day-to-day programme
+     management.
+
+A-DQ9.
+
+     VIEW 1: v_active_tpt_enrolments
+     Tables joined: tpt_enrolments, persons, tpt_regimens,
+                    health_facilities, districts.
+     Filter: Only enrolments where current_status = 'Active'.
+
+     Information surfaced:
+     For every patient currently on TPT, this view provides: their Nikshay
+     ID, full name, age, sex, HIV status, the regimen code and name, start
+     date, planned and extended end dates, weight, whether pyridoxine was
+     prescribed, adherence method, the treating facility, and the district.
+     All in a single, pre-joined row — no complex joins required by the user.
+
+     Practical use:
+     A District TB Officer (DTO) can run a simple SELECT on this view to get
+     a real-time list of all patients currently on TPT in their district.
+     They can filter by hiv_status to quickly identify all PLHIV on TPT,
+     or by regimen_code to see how many patients are on 3HP vs 6H. A TBHV
+     can check which patients are approaching their planned_end_date to
+     schedule final counselling and outcome recording. The pyridoxine_
+     prescribed flag helps ensure at-risk patients are not missed.
+
+     ────────────────────────────────────────────────────────────────────
+     VIEW 2: v_tpt_cascade_district
+     Tables joined: districts, persons, contacts, tb_screenings,
+                    tbi_test_results, tpt_eligibility_assessments,
+                    tpt_enrolments.
+
+     Information surfaced:
+     For each district, this view shows a stepwise care cascade count:
+     - contacts_enumerated: How many contacts were identified.
+     - contacts_screened: How many were screened for TB symptoms.
+     - contacts_tbi_tested: How many received a TBI test.
+     - contacts_eligible: How many were assessed as eligible for TPT.
+     - contacts_initiated: How many actually started TPT.
+     - contacts_completed: How many successfully completed TPT.
+
+     Practical use:
+     This is the cornerstone M&E tool. A programme manager can instantly
+     see where the biggest drop-offs in the cascade occur in each district.
+     For example, if contacts_screened is much lower than contacts_enumerated,
+     the field team's reach is the bottleneck. If contacts_eligible is high
+     but contacts_initiated is low, there is a counselling or drug supply
+     problem. This view directly feeds into the CONT-INV-COV and TPT-COV
+     indicator calculations. It can be used at monthly review meetings to
+     hold district teams accountable and target corrective action.
+
+     ────────────────────────────────────────────────────────────────────
+     VIEW 3: v_drug_interactions_summary
+     Tables joined: drug_interactions (single table, no joins).
+
+     Information surfaced:
+     A clean, ordered lookup of all drug-drug interactions relevant to TPT:
+     the TPT drug (Isoniazid or Rifamycin), the drug class of the
+     interacting medication, the specific interacting drugs, the direction
+     of interaction (Increases or Decreases), and the clinical note.
+     Ordered by tpt_drug and drug_class for easy scanning.
+
+     Practical use:
+     A clinician at an ART Centre or DR-TB Centre about to initiate TPT
+     in a patient on complex co-medications can query this view to quickly
+     check whether any current medication interacts with the proposed TPT
+     regimen. For example: "SELECT * FROM v_drug_interactions_summary
+     WHERE tpt_drug = 'Rifamycin'" shows all 11 Rifamycin interactions
+     at a glance — antiretrovirals, contraceptives, immunosuppressants,
+     antifungals, and OST drugs — enabling an informed regimen choice
+     before prescription. It can also be embedded in a clinical decision
+     support screen of the Nikshay application.
+
+------------------------------------------------------------------------
+
+DQ10. A programme evaluator reviewing the PMTPT database for Q1 2024
+      notices that Suresh Patil completed 3HP with an outcome of "Treatment
+      Completed," but his Month-1 follow-up adherence was recorded as only
+      33.33%. Explain how this is clinically consistent, trace his full
+      treatment timeline from the database, and describe what the database
+      would record if he had instead been lost to follow-up.
+
+A-DQ10.
+
+      WHY 33.33% AT MONTH-1 IS NOT A RED FLAG:
+      Suresh Patil is on the 3HP regimen, which has a total of 12 weekly
+      doses over approximately 12 weeks (3 months). His enrolment started
+      on 2024-01-26. His first follow-up visit was on 2024-02-26 — exactly
+      one month later. At that point, only 4 of 12 planned weekly doses had
+      been taken (4 ÷ 12 = 33.33%). This is arithmetically correct and
+      entirely expected: in a weekly regimen, 4 weeks = 4 doses. The
+      "33.33%" represents progress at the one-month mark, not a failure of
+      adherence. By the second visit on 2024-03-26, he had taken 8 of 12
+      doses (66.67%) — again consistent with 8 weeks having passed. He
+      then completed all 12 doses by 2024-04-25 (the planned end date).
+      Since 12/12 = 100%, which exceeds the 90% completion threshold for
+      3HP, the outcome of "Treatment Completed" (outcome_id = 1) is fully
+      justified.
+
+      HIS FULL TREATMENT TIMELINE FROM THE DATABASE:
+
+      2024-01-22  TBI test requested and administered (TST, Dharavi HWC).
+      2024-01-24  TBI result: Positive (14 mm induration).
+      2024-01-25  Eligibility assessment: HHC-5PLUS, active TB excluded,
+                  3HP recommended (assessed by Dr Desai).
+      2024-01-26  TPT enrolment: 3HP started. Weight: 72 kg. No pyridoxine.
+                  Adherence method: 99DOTS. Planned end: 2024-04-25.
+                  Extended end: 2024-06-03.
+      2024-02-26  Month-1 follow-up: 4/12 doses (33.33%), weight 71.8 kg,
+                  no symptoms, no AEs. Visited by TBHV Rakesh.
+      2024-03-26  Month-2 follow-up: 8/12 doses (66.67%), weight 72.0 kg,
+                  no symptoms, no AEs. Visited by TBHV Rakesh.
+      2024-04-25  Treatment completed. Outcome recorded as 'Completed'
+                  (outcome_id = 1, outcome_date = 2024-04-25).
+                  enrolment status updated to 'Completed'.
+
+      IF HE HAD BEEN LOST TO FOLLOW-UP INSTEAD:
+      For the 3HP regimen, LTFU is defined as interruption for ≥4 consecutive
+      weeks (≥28 days). Suppose Suresh had taken only 4 doses and then
+      disappeared after his Month-1 visit. The following would be recorded:
+
+      treatment_interruptions table:
+      - interruption_start: 2024-02-26 (date of last dose or last contact)
+      - interruption_end: NULL initially; filled in if he returns.
+      - duration_days: computed when end date is entered.
+      - reason: "Patient not contactable / missed doses"
+      - doses_taken_before: 4
+      - pct_doses_taken: 33.33%
+      - management_action: 'Discontinue' if he never returns, or
+        'Restart Full Course' if he returns after >4 weeks.
+
+      tpt_enrolments table:
+      - current_status would be updated to 'LTFU'
+      - outcome_id would be set to the LTFU outcome type.
+      - outcome_date: the date the LTFU decision is made.
+
+      The monitoring indicator TPT-COMP (completion rate) for that period
+      would record 1 fewer in the numerator, reducing the completion
+      percentage for the facility. The v_tpt_cascade_district view would
+      show contacts_initiated = 1 but contacts_completed = 0 for the
+      cohort including Suresh.
+
+      The POST-TPT-FU indicator (6m, 12m, 18m, 24m follow-up) would not
+      be triggered at all, as follow-up is only scheduled for those who
+      completed TPT — a patient with LTFU outcome would not generate
+      post-TPT follow-up visit records.
+
+================================================================================
+END OF Q&A FILE — 100 Short + 10 Descriptive Questions & Answers
+================================================================================
+

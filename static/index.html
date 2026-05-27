@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PMTPT Clinical AI Assistant</title>
+  <meta name="description" content="PMTPT Clinical AI Assistant — query a Tuberculosis database using natural language powered by AI." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            accent: {
+              50:  '#f0f5f4',
+              100: '#dae5e2',
+              200: '#b7ccc7',
+              300: '#8bada5',
+              400: '#668f86',
+              500: '#4d756c',
+              600: '#3d5d57',
+              700: '#334c47',
+              800: '#2c3f3b',
+              900: '#273533',
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #c5c8cc; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #a1a5ab; }
+
+    /* Smooth fade-in for messages */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .msg-animate {
+      animation: fadeInUp 0.35s ease-out forwards;
+    }
+
+    /* Typing dots */
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0.25; }
+      40% { opacity: 1; }
+    }
+    .dot-1 { animation: blink 1.4s infinite 0s; }
+    .dot-2 { animation: blink 1.4s infinite 0.2s; }
+    .dot-3 { animation: blink 1.4s infinite 0.4s; }
+
+    /* SQL accordion transition */
+    .sql-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+    .sql-body.open {
+      max-height: 600px;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    /* Markdown-ish rendering basics */
+    .ai-prose p { margin-bottom: 0.5em; }
+    .ai-prose ul, .ai-prose ol { margin-left: 1.25em; margin-bottom: 0.5em; }
+    .ai-prose li { list-style: disc; margin-bottom: 0.2em; }
+    .ai-prose strong { font-weight: 600; }
+    .ai-prose code { background: #e8eaed; padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.82em; font-family: 'SF Mono', 'Fira Code', monospace; }
+    .ai-prose pre { background: #f1f3f5; padding: 0.75em 1em; border-radius: 6px; overflow-x: auto; margin-bottom: 0.75em; }
+    .ai-prose pre code { background: transparent; padding: 0; }
+    .ai-prose h1, .ai-prose h2, .ai-prose h3 { font-weight: 600; margin-top: 0.75em; margin-bottom: 0.35em; }
+    .ai-prose h1 { font-size: 1.15em; }
+    .ai-prose h2 { font-size: 1.05em; }
+    .ai-prose h3 { font-size: 0.95em; }
+    .ai-prose table { width: 100%; border-collapse: collapse; margin-bottom: 0.75em; font-size: 0.85em; }
+    .ai-prose th, .ai-prose td { border: 1px solid #d1d5db; padding: 0.4em 0.65em; text-align: left; }
+    .ai-prose th { background: #f1f3f5; font-weight: 600; }
+    .ai-prose blockquote { border-left: 3px solid #c5c8cc; padding-left: 0.75em; color: #64748b; margin-bottom: 0.5em; }
+  </style>
+</head>
+
+<body class="bg-stone-50 text-slate-800 font-sans antialiased h-screen flex flex-col overflow-hidden">
+
+  <!-- ─── Header ──────────────────────────────────────────────── -->
+  <header id="app-header" class="flex-shrink-0 bg-white/80 backdrop-blur border-b border-slate-200/70">
+    <div class="max-w-3xl mx-auto px-5 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <!-- Logo mark -->
+        <div class="w-8 h-8 rounded-lg bg-accent-100 flex items-center justify-center">
+          <svg class="w-4.5 h-4.5 text-accent-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a5 5 0 0 1 5 5v3a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5Z"/>
+            <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+            <line x1="12" y1="19" x2="12" y2="22"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-sm font-semibold text-slate-700 tracking-tight leading-none">PMTPT Clinical AI Assistant</h1>
+          <p class="text-[11px] text-slate-400 mt-0.5 font-medium">Tuberculosis Database · Natural Language Query</p>
+        </div>
+      </div>
+      <div id="status-indicator" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent-50 border border-accent-200/60">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-50"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-accent-500"></span>
+        </span>
+        <span class="text-[11px] font-medium text-accent-700">System Connected</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── Chat Area ───────────────────────────────────────────── -->
+  <main id="chat-area" class="flex-1 overflow-y-auto">
+    <div id="messages" class="max-w-3xl mx-auto px-5 py-6 space-y-5">
+
+      <!-- Welcome card -->
+      <div id="welcome-card" class="msg-animate flex flex-col items-center text-center py-12">
+        <div class="w-14 h-14 rounded-2xl bg-accent-50 border border-accent-200/50 flex items-center justify-center mb-5">
+          <svg class="w-7 h-7 text-accent-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <h2 class="text-lg font-semibold text-slate-700 mb-1.5">How can I help you today?</h2>
+        <p class="text-sm text-slate-400 max-w-md leading-relaxed">
+          Ask questions about the PMTPT Tuberculosis database in plain English. I'll translate your query into SQL and return the results.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ─── Input Area ──────────────────────────────────────────── -->
+  <footer id="input-area" class="flex-shrink-0 bg-white/80 backdrop-blur border-t border-slate-200/70">
+    <div class="max-w-3xl mx-auto px-5 pt-3 pb-4">
+
+      <!-- Input row -->
+      <div class="flex items-end gap-2.5">
+        <div class="flex-1 relative">
+          <textarea
+            id="user-input"
+            rows="1"
+            placeholder="Ask a question about the TB database…"
+            class="w-full resize-none rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent-300/50 focus:border-accent-300 transition-shadow duration-200"
+            style="max-height: 140px;"
+          ></textarea>
+        </div>
+        <button
+          id="send-btn"
+          onclick="sendMessage()"
+          class="flex-shrink-0 h-[46px] w-[46px] rounded-xl bg-accent-600 hover:bg-accent-700 active:scale-95 text-white flex items-center justify-center transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+        >
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+
+      <p class="text-[10.5px] text-slate-400 mt-2.5 text-center">AI-generated SQL may not always be accurate. Please verify critical queries independently.</p>
+    </div>
+  </footer>
+
+  <!-- ─── JavaScript ──────────────────────────────────────────── -->
+  <script>
+    const messagesEl    = document.getElementById('messages');
+    const chatArea      = document.getElementById('chat-area');
+    const inputEl       = document.getElementById('user-input');
+    const sendBtn       = document.getElementById('send-btn');
+    const welcomeCard   = document.getElementById('welcome-card');
+
+    let isProcessing = false;
+
+    /* ── Auto-resize textarea ────────────────────────────── */
+    inputEl.addEventListener('input', () => {
+      inputEl.style.height = 'auto';
+      inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + 'px';
+    });
+
+    /* ── Enter to send (Shift+Enter for newline) ─────────── */
+    inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    /* ── Scroll to bottom ────────────────────────────────── */
+    function scrollToBottom() {
+      requestAnimationFrame(() => {
+        chatArea.scrollTo({ top: chatArea.scrollHeight, behavior: 'smooth' });
+      });
+    }
+
+    /* ── Simple markdown → HTML ──────────────────────────── */
+    function renderMarkdown(text) {
+      if (!text) return '';
+      let html = text
+        // Code blocks
+        .replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => `<pre><code>${escapeHtml(code.trim())}</code></pre>`)
+        // Inline code
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        // Bold
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        // Italic
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        // Headings
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        // Blockquotes
+        .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
+        // Unordered lists
+        .replace(/^[\-\*] (.+)$/gm, '<li>$1</li>')
+        // Tables
+        .replace(/^(\|.+\|)\s*\n\|[\s\-:|]+\|\s*\n((?:\|.+\|\s*\n?)*)/gm, (_, headerRow, bodyRows) => {
+          const headers = headerRow.split('|').filter(c => c.trim()).map(c => `<th>${c.trim()}</th>`).join('');
+          const rows = bodyRows.trim().split('\n').map(row => {
+            const cells = row.split('|').filter(c => c.trim()).map(c => `<td>${c.trim()}</td>`).join('');
+            return `<tr>${cells}</tr>`;
+          }).join('');
+          return `<table><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
+        });
+
+      // Wrap consecutive <li> in <ul>
+      html = html.replace(/((?:<li>.*<\/li>\s*)+)/g, '<ul>$1</ul>');
+      // Paragraphs for remaining lines
+      html = html.split('\n').map(line => {
+        const trimmed = line.trim();
+        if (!trimmed) return '';
+        if (/^<(?:h[1-6]|ul|ol|li|pre|table|thead|tbody|tr|th|td|blockquote|div)/.test(trimmed)) return trimmed;
+        return `<p>${trimmed}</p>`;
+      }).join('\n');
+      return html;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    /* ── Add a user message bubble ───────────────────────── */
+    function addUserMessage(text) {
+      const div = document.createElement('div');
+      div.className = 'msg-animate flex justify-end';
+      div.innerHTML = `
+        <div class="max-w-[85%] md:max-w-[75%]">
+          <div class="bg-slate-100 border border-slate-200/70 rounded-2xl rounded-br-md px-4 py-3">
+            <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">${escapeHtml(text)}</p>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1 text-right mr-1">You · just now</p>
+        </div>
+      `;
+      messagesEl.appendChild(div);
+      scrollToBottom();
+    }
+
+    /* ── Add typing indicator ────────────────────────────── */
+    function addTypingIndicator() {
+      const div = document.createElement('div');
+      div.id = 'typing-indicator';
+      div.className = 'msg-animate flex justify-start';
+      div.innerHTML = `
+        <div class="flex items-center gap-2 bg-white border border-slate-200/70 rounded-2xl rounded-bl-md px-4 py-3">
+          <div class="flex items-center gap-1">
+            <span class="dot-1 w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>
+            <span class="dot-2 w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>
+            <span class="dot-3 w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>
+          </div>
+          <span class="text-xs text-slate-400 ml-1">Analyzing query…</span>
+        </div>
+      `;
+      messagesEl.appendChild(div);
+      scrollToBottom();
+    }
+
+    function removeTypingIndicator() {
+      const el = document.getElementById('typing-indicator');
+      if (el) el.remove();
+    }
+
+    /* ── Add an AI response bubble ───────────────────────── */
+    function addAIMessage(answer, sql) {
+      const id = 'sql-' + Date.now();
+      const sqlBlock = sql
+        ? `
+          <div class="mt-3 border-t border-slate-100 pt-2">
+            <button onclick="toggleSQL('${id}')" id="btn-${id}" class="flex items-center gap-1.5 text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors duration-150">
+              <svg class="w-3.5 h-3.5 transition-transform duration-200" id="chevron-${id}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              Show SQL Query
+            </button>
+            <div id="${id}" class="sql-body">
+              <div class="bg-slate-50 border border-slate-200/70 rounded-lg px-3.5 py-2.5 mt-1.5">
+                <pre class="text-[11px] font-mono text-slate-600 leading-relaxed whitespace-pre-wrap break-all">${escapeHtml(sql)}</pre>
+              </div>
+            </div>
+          </div>
+        `
+        : '';
+
+      const div = document.createElement('div');
+      div.className = 'msg-animate flex justify-start';
+      div.innerHTML = `
+        <div class="max-w-[90%] md:max-w-[80%]">
+          <div class="bg-white border border-slate-200/70 rounded-2xl rounded-bl-md px-5 py-4 shadow-sm shadow-slate-100/80">
+            <div class="ai-prose text-sm text-slate-700 leading-relaxed">
+              ${renderMarkdown(answer)}
+            </div>
+            ${sqlBlock}
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1 ml-1">AI Assistant · just now</p>
+        </div>
+      `;
+      messagesEl.appendChild(div);
+      scrollToBottom();
+    }
+
+    /* ── Add error message ───────────────────────────────── */
+    function addErrorMessage(errorText) {
+      const div = document.createElement('div');
+      div.className = 'msg-animate flex justify-start';
+      div.innerHTML = `
+        <div class="max-w-[85%] md:max-w-[75%]">
+          <div class="bg-white border border-red-200/60 rounded-2xl rounded-bl-md px-5 py-4">
+            <div class="flex items-start gap-2.5">
+              <svg class="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              <p class="text-sm text-red-600/80 leading-relaxed">${escapeHtml(errorText)}</p>
+            </div>
+          </div>
+        </div>
+      `;
+      messagesEl.appendChild(div);
+      scrollToBottom();
+    }
+
+    /* ── Toggle SQL accordion ────────────────────────────── */
+    function toggleSQL(id) {
+      const body    = document.getElementById(id);
+      const chevron = document.getElementById('chevron-' + id);
+      const btn     = document.getElementById('btn-' + id);
+      body.classList.toggle('open');
+      if (body.classList.contains('open')) {
+        chevron.style.transform = 'rotate(180deg)';
+        btn.innerHTML = btn.innerHTML.replace('Show SQL Query', 'Hide SQL Query');
+      } else {
+        chevron.style.transform = 'rotate(0deg)';
+        btn.innerHTML = btn.innerHTML.replace('Hide SQL Query', 'Show SQL Query');
+      }
+    }
+
+    /* ── Send message ────────────────────────────────────── */
+    async function sendMessage() {
+      const text = inputEl.value.trim();
+      if (!text || isProcessing) return;
+
+      isProcessing = true;
+      sendBtn.disabled = true;
+
+      // Hide welcome card & suggested questions on first message
+      if (welcomeCard) {
+        welcomeCard.style.transition = 'opacity 0.2s ease';
+        welcomeCard.style.opacity = '0';
+        setTimeout(() => welcomeCard.remove(), 200);
+      }
+      addUserMessage(text);
+      inputEl.value = '';
+      inputEl.style.height = 'auto';
+      addTypingIndicator();
+
+      try {
+        const response = await fetch('/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: text }),
+        });
+
+        removeTypingIndicator();
+
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}`);
+        }
+
+        const data = await response.json();
+        addAIMessage(data.answer || 'No response received.', data.sql || '');
+      } catch (err) {
+        removeTypingIndicator();
+        addErrorMessage(`Could not reach the assistant. ${err.message}`);
+      } finally {
+        isProcessing = false;
+        sendBtn.disabled = false;
+        inputEl.focus();
+      }
+    }
+  </script>
+
+</body>
+</html>
