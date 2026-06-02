@@ -27,7 +27,7 @@ logging.basicConfig(
 logger = logging.getLogger("pmtpt")
 
 # Startup validation — fail loudly at boot, not on first request
-_REQUIRED_ENV = ["DATABASE_URL", "GROQ_API_KEY","FRONTEND_URL","API_KEY"]
+_REQUIRED_ENV = ["DATABASE_URL", "GROQ_API_KEY","FRONTEND_URL"]
 
 def _validate_env() -> None:
     missing = [k for k in _REQUIRED_ENV if not os.getenv(k)]
