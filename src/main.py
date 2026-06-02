@@ -112,6 +112,7 @@ class AgentState(TypedDict):
     query_result: str
     formatted_response: str
     error: str
+    is_clinical_question: bool
 
 
 # Graph nodes
@@ -123,6 +124,80 @@ def receive_question(state: AgentState) -> AgentState:
         return {**state, "error": "Empty question received. Please ask a question."}
     logger.info("Question received (length=%d)", len(question))
     return {**state, "user_question": question, "error": ""}
+
+
+def check_intent(state: AgentState) -> AgentState:
+    """
+    Classify whether the user's message is a clinical/data question or not.
+    Non-clinical messages (greetings, small talk, out-of-scope) get a friendly
+    direct response and skip the entire SQL pipeline.
+    """
+    if state.get("error"):
+        return state
+
+    question = state["user_question"]
+
+    prompt = f"""You are a classifier for a Tuberculosis Preventive Treatment (TPT) clinical database assistant.
+
+Decide if the user's message is a clinical or data question that can be answered by querying a TPT patient database.
+
+Clinical/data questions include anything about: patients, treatment, diagnoses, prescriptions, test results, statistics, counts, follow-ups, outcomes, or any database-related query.
+
+Non-clinical messages include: greetings, small talk, jokes, general knowledge questions, questions about yourself, or anything unrelated to TPT clinical data.
+
+Reply with EXACTLY one word: CLINICAL or NON_CLINICAL
+
+User message: {question}
+
+Classification:"""
+
+    try:
+        @_llm_retry
+        def _invoke() -> str:
+            response = llm.invoke(prompt)
+            return response.content.strip().upper()
+
+        classification = _invoke()
+        is_clinical = classification.startswith("CLINICAL")
+        logger.info("Intent classification for question: %s", classification)
+
+        if not is_clinical:
+            # Build a friendly off-topic response directly, no SQL needed
+            friendly_prompt = f"""You are a friendly Clinical AI Assistant for a Tuberculosis Preventive Treatment (TPT) database in India.
+
+The user sent a message that is not a clinical data question. Respond in a warm, brief, and helpful way.
+Let them know you're here to help with TPT clinical data questions — like patient records, treatment stats, outcomes, etc.
+Keep it to 2-3 sentences max. Do not be robotic.
+
+User message: {question}
+
+Response:"""
+
+            @_llm_retry
+            def _friendly() -> str:
+                response = llm.invoke(friendly_prompt)
+                return response.content.strip()
+
+            friendly_response = _friendly()
+            return {
+                **state,
+                "is_clinical_question": False,
+                "formatted_response": friendly_response,
+            }
+
+        return {**state, "is_clinical_question": True}
+
+    except Exception as e:
+        logger.exception("Intent check failed: %s", e)
+        # On failure, assume clinical and let the pipeline proceed normally
+        return {**state, "is_clinical_question": True}
+
+
+def route_after_intent(state: AgentState) -> Literal["fetch_schema", "done"]:
+    """If non-clinical, skip the SQL pipeline entirely."""
+    if state.get("is_clinical_question", True):
+        return "fetch_schema"
+    return "done"
 
 
 def fetch_schema(state: AgentState) -> AgentState:
@@ -332,18 +407,30 @@ FORMATTED RESPONSE:"""
 
 
 def handle_error(state: AgentState) -> AgentState:
-    """Return a safe, user-friendly error message. Never expose internal details."""
+    """Return a user-friendly error message that includes the actual error detail."""
     error_msg = state.get("error", "An unknown error occurred.")
-    logger.warning("Returning error to user: %s", error_msg)
+    logger.error("Returning error to user: %s", error_msg)
+
+    # Categorise the error so the message is actionable
+    if "schema" in error_msg.lower():
+        hint = "There was a problem reading the database schema."
+    elif "sql" in error_msg.lower() or "select" in error_msg.lower() or "keyword" in error_msg.lower():
+        hint = "The query generated from your question was invalid or unsafe."
+    elif "database" in error_msg.lower() or "query" in error_msg.lower():
+        hint = "The database query failed to execute."
+    elif "llm" in error_msg.lower() or "groq" in error_msg.lower():
+        hint = "The AI model failed to generate a response."
+    else:
+        hint = "An unexpected error occurred while processing your request."
+
     return {
         **state,
         "formatted_response": (
-            "⚠️ **Request could not be processed**\n\n"
-            "Please try rephrasing your question. "
-            "I can only answer clinical data questions using "
-            "read-only queries against the PMTPT database."
+            f"⚠️ **Request could not be processed**\n\n"
+            f"**Reason:** {hint}\n\n"
+            f"**Details:** `{error_msg}`\n\n"
+            f"Please try rephrasing your question, or contact support if this persists."
         ),
-        # Internal error detail is logged above but NOT sent to the client
     }
 
 
@@ -354,10 +441,16 @@ def route_after_validation(state: AgentState) -> Literal["execute_query", "handl
     return "handle_error"
 
 
+def route_on_error(state: AgentState) -> Literal["handle_error", "next"]:
+    """Generic early-exit: if state has an error, skip straight to handle_error."""
+    return "handle_error" if state.get("error") else "next"
+
+
 # Graph assembly
 workflow = StateGraph(AgentState)
 
 workflow.add_node("receive_question", receive_question)
+workflow.add_node("check_intent", check_intent)
 workflow.add_node("fetch_schema", fetch_schema)
 workflow.add_node("generate_sql", generate_sql)
 workflow.add_node("validate_sql", validate_sql)
@@ -366,9 +459,10 @@ workflow.add_node("format_response", format_response)
 workflow.add_node("handle_error", handle_error)
 
 workflow.add_edge(START, "receive_question")
-workflow.add_edge("receive_question", "fetch_schema")
-workflow.add_edge("fetch_schema", "generate_sql")
-workflow.add_edge("generate_sql", "validate_sql")
+workflow.add_conditional_edges("receive_question", route_on_error, {"handle_error": "handle_error", "next": "check_intent"})
+workflow.add_conditional_edges("check_intent", route_after_intent, {"fetch_schema": "fetch_schema", "done": END})
+workflow.add_conditional_edges("fetch_schema", route_on_error, {"handle_error": "handle_error", "next": "generate_sql"})
+workflow.add_conditional_edges("generate_sql", route_on_error, {"handle_error": "handle_error", "next": "validate_sql"})
 workflow.add_conditional_edges("validate_sql", route_after_validation)
 workflow.add_edge("execute_query", "format_response")
 workflow.add_edge("format_response", END)
