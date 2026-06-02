@@ -368,7 +368,7 @@
     /* ── Health check — updates status indicator on load ────── */
     async function checkHealth() {
       try {
-        const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(8000) });
+        const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(65000) });
         const ok = res.ok;
         setStatus(ok ? 'connected' : 'degraded');
       } catch {
@@ -623,7 +623,7 @@
       // Show sleep-warning banner if backend takes > 8 s
       slowTimer = setTimeout(() => {
         slowBanner.classList.add('visible');
-      }, 8000);
+      }, 3000);
 
       // AbortController — cancel fetch after 90 s
       const controller = new AbortController();
