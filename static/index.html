@@ -6,31 +6,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PMTPT Clinical AI Assistant</title>
   <meta name="description"
-    content="PMTPT Clinical AI Assistant — query a Tuberculosis database using natural language powered by AI." />
+    content="PMTPT Clinical AI — query India's TB Preventive Treatment database in plain English." />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap"
+    rel="stylesheet" />
 
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            sans: ['"DM Sans"', 'ui-sans-serif', 'sans-serif'],
+            serif: ['"DM Serif Display"', 'Georgia', 'serif'],
           },
           colors: {
-            accent: {
-              50: '#f0f5f4',
-              100: '#dae5e2',
-              200: '#b7ccc7',
-              300: '#8bada5',
-              400: '#668f86',
-              500: '#4d756c',
-              600: '#3d5d57',
-              700: '#334c47',
-              800: '#2c3f3b',
-              900: '#273533',
+            sage: {
+              50: '#f4f7f5',
+              100: '#e6ede9',
+              200: '#ccdbd3',
+              300: '#a5c0b1',
+              400: '#779f8b',
+              500: '#557f6d',
+              600: '#426357',
+              700: '#364f46',
+              800: '#2d3f39',
+              900: '#273530',
+            },
+            stone: {
+              50: '#fafaf9',
+              100: '#f5f5f4',
+              200: '#e7e5e4',
+              300: '#d6d3d1',
+              400: '#a8a29e',
+              500: '#78716c',
+              600: '#57534e',
+              700: '#44403c',
+              800: '#292524',
+              900: '#1c1917',
             },
           },
         },
@@ -39,17 +54,23 @@
   </script>
 
   <style>
-    /* ── Config ────────────────────────────────────────────────────
-       Set your deployed Render URL here.
-       This is the ONLY place you need to change when deploying.
-    ──────────────────────────────────────────────────────────────── */
+    /* ── Root config ──────────────────────────────── */
     :root {
       --api-base: 'REPLACE_WITH_RENDER_URL';
     }
 
-    /* Scrollbar */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #f4f7f5;
+    }
+
+    /* ── Scrollbar ─────────────────────────────────── */
     ::-webkit-scrollbar {
-      width: 5px;
+      width: 4px;
     }
 
     ::-webkit-scrollbar-track {
@@ -57,19 +78,150 @@
     }
 
     ::-webkit-scrollbar-thumb {
-      background: #c5c8cc;
+      background: #ccdbd3;
       border-radius: 10px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: #a1a5ab;
+      background: #a5c0b1;
     }
 
-    /* Smooth fade-in for messages */
+    /* ── Page-level views ─────────────────────────── */
+    #landing-view,
+    #app-view {
+      position: fixed;
+      inset: 0;
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    #landing-view.hidden-view {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-18px);
+    }
+
+    #app-view {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(18px);
+    }
+
+    #app-view.visible-view {
+      opacity: 1;
+      pointer-events: all;
+      transform: translateY(0);
+    }
+
+    /* ── Landing page ─────────────────────────────── */
+    .landing-bg {
+      background: #f4f7f5;
+    }
+
+    .landing-rule {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #ccdbd3 30%, #ccdbd3 70%, transparent);
+    }
+
+    .capability-card {
+      background: #ffffff;
+      border: 1px solid #e6ede9;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .capability-card:hover {
+      border-color: #a5c0b1;
+      box-shadow: 0 2px 12px rgba(85, 127, 109, 0.08);
+    }
+
+    .pill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #557f6d;
+      background: #e6ede9;
+      border-radius: 100px;
+      padding: 0.25rem 0.65rem;
+    }
+
+    /* ── App chrome ───────────────────────────────── */
+    #app-view {
+      display: flex;
+      flex-direction: column;
+      background: #f4f7f5;
+    }
+
+    /* ── Sidebar ──────────────────────────────────── */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      background: #ffffff;
+      border-right: 1px solid #e6ede9;
+      z-index: 40;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    #sidebar.open {
+      transform: translateX(0);
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.07);
+    }
+
+    #sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.18);
+      z-index: 39;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    #sidebar-overlay.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .history-item {
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      border: 1px solid transparent;
+    }
+
+    .history-item:hover {
+      background: #f4f7f5;
+      border-color: #e6ede9;
+    }
+
+    .history-item.active {
+      background: #e6ede9;
+      border-color: #ccdbd3;
+    }
+
+    /* ── Chat area ────────────────────────────────── */
+    #chat-area {
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    /* ── Animations ───────────────────────────────── */
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(12px);
+        transform: translateY(10px);
       }
 
       to {
@@ -78,17 +230,28 @@
       }
     }
 
-    .msg-animate {
-      animation: fadeInUp 0.35s ease-out forwards;
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
-    /* Typing dots */
+    .msg-animate {
+      animation: fadeInUp 0.3s ease-out forwards;
+    }
+
     @keyframes blink {
 
       0%,
       80%,
       100% {
-        opacity: 0.25;
+        opacity: 0.2;
       }
 
       40% {
@@ -108,20 +271,33 @@
       animation: blink 1.4s infinite 0.4s;
     }
 
-    /* SQL accordion transition */
-    .sql-body {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease, padding 0.3s ease;
+    /* ── Voice mic ────────────────────────────────── */
+    @keyframes pulse-ring {
+      0% {
+        transform: scale(1);
+        opacity: 0.6;
+      }
+
+      100% {
+        transform: scale(1.6);
+        opacity: 0;
+      }
     }
 
-    .sql-body.open {
-      max-height: 600px;
-      padding-top: 0.5rem;
-      padding-bottom: 0.5rem;
+    #mic-btn.listening .mic-ring {
+      animation: pulse-ring 1s ease-out infinite;
     }
 
-    /* Markdown-ish rendering basics */
+    #mic-btn.listening {
+      background: #e6ede9 !important;
+      border-color: #557f6d !important;
+    }
+
+    #mic-btn.listening svg {
+      color: #557f6d;
+    }
+
+    /* ── Markdown prose ───────────────────────────── */
     .ai-prose p {
       margin-bottom: 0.5em;
     }
@@ -197,24 +373,23 @@
     }
 
     .ai-prose th {
-      background: #f1f3f5;
+      background: #f4f7f5;
       font-weight: 600;
     }
 
     .ai-prose blockquote {
-      border-left: 3px solid #c5c8cc;
+      border-left: 3px solid #ccdbd3;
       padding-left: 0.75em;
       color: #64748b;
       margin-bottom: 0.5em;
     }
 
-    /* Textarea disabled state */
+    /* ── Misc ─────────────────────────────────────── */
     textarea:disabled {
-      opacity: 0.6;
+      opacity: 0.55;
       cursor: not-allowed;
     }
 
-    /* Slow-start warning banner */
     #slowstart-banner {
       display: none;
       animation: fadeInUp 0.4s ease-out forwards;
@@ -223,17 +398,71 @@
     #slowstart-banner.visible {
       display: flex;
     }
+
+    .cta-btn {
+      background: #364f46;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 0.8rem 2rem;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cta-btn:hover {
+      background: #2d3f39;
+      transform: translateY(-1px);
+    }
+
+    .cta-btn:active {
+      transform: translateY(0);
+    }
+
+    /* landing stagger */
+    .land-1 {
+      animation: fadeInUp 0.5s ease-out 0.1s both;
+    }
+
+    .land-2 {
+      animation: fadeInUp 0.5s ease-out 0.2s both;
+    }
+
+    .land-3 {
+      animation: fadeInUp 0.5s ease-out 0.3s both;
+    }
+
+    .land-4 {
+      animation: fadeInUp 0.5s ease-out 0.4s both;
+    }
+
+    .land-5 {
+      animation: fadeInUp 0.5s ease-out 0.5s both;
+    }
+
+    .land-6 {
+      animation: fadeInUp 0.5s ease-out 0.6s both;
+    }
   </style>
 </head>
 
-<body class="bg-stone-50 text-slate-800 font-sans antialiased h-screen flex flex-col overflow-hidden">
+<body class="h-screen overflow-hidden antialiased">
 
-  <!-- ─── Header ──────────────────────────────────────────────── -->
-  <header class="flex-shrink-0 bg-white/80 backdrop-blur border-b border-slate-200/70">
-    <div class="max-w-3xl mx-auto px-5 py-3.5 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-lg bg-accent-100 flex items-center justify-center">
-          <svg class="w-4 h-4 text-accent-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+  <!-- ══════════════════════════════════════════════════
+     LANDING VIEW
+══════════════════════════════════════════════════ -->
+  <div id="landing-view" class="landing-bg overflow-y-auto h-full">
+    <div class="max-w-2xl mx-auto px-6 py-14 flex flex-col min-h-full">
+
+      <!-- Logo + badge -->
+      <div class="land-1 flex items-center gap-3 mb-10">
+        <div class="w-9 h-9 rounded-xl bg-sage-700 flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 2a5 5 0 0 1 5 5v3a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5Z" />
             <path d="M19 10v1a7 7 0 0 1-14 0v-1" />
@@ -241,136 +470,596 @@
           </svg>
         </div>
         <div>
-          <h1 class="text-sm font-semibold text-slate-700 tracking-tight leading-none">PMTPT Clinical AI Assistant</h1>
-          <p class="text-[11px] text-slate-400 mt-0.5 font-medium">Tuberculosis Database · Natural Language Query</p>
+          <p class="text-[11px] font-medium tracking-widest uppercase text-sage-500 leading-none">NTEP · India</p>
+          <h1 class="text-sm font-semibold text-stone-700 leading-tight">PMTPT Clinical AI</h1>
         </div>
       </div>
-      <!-- Status indicator — reflects real /health check result -->
-      <div id="status-indicator"
-        class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200/60 transition-all duration-500">
-        <span class="relative flex h-2 w-2">
-          <span id="status-ping"
-            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-50"></span>
-          <span id="status-dot" class="relative inline-flex rounded-full h-2 w-2 bg-slate-400"></span>
-        </span>
-        <span id="status-text" class="text-[11px] font-medium text-slate-500">Checking…</span>
-      </div>
-    </div>
-  </header>
 
-  <!-- ─── Slow-start warning banner ──────────────────────────── -->
-  <div id="slowstart-banner"
-    class="flex-shrink-0 items-center gap-2.5 bg-amber-50 border-b border-amber-200/60 px-5 py-2.5">
-    <svg class="w-4 h-4 text-amber-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="8" x2="12" y2="12" />
-      <line x1="12" y1="16" x2="12.01" y2="16" />
-    </svg>
-    <p class="text-[11.5px] text-amber-700 leading-relaxed">
-      The backend is waking up from sleep — this first response may take up to 60 seconds on the free tier. Subsequent
-      requests will be fast.
-    </p>
-  </div>
-
-  <!-- ─── Chat Area ───────────────────────────────────────────── -->
-  <main id="chat-area" class="flex-1 overflow-y-auto">
-    <div id="messages" class="max-w-3xl mx-auto px-5 py-6 space-y-5">
-
-      <!-- Welcome card -->
-      <div id="welcome-card" class="msg-animate flex flex-col items-center text-center py-12">
-        <div
-          class="w-14 h-14 rounded-2xl bg-accent-50 border border-accent-200/50 flex items-center justify-center mb-5">
-          <svg class="w-7 h-7 text-accent-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
-        </div>
-        <h2 class="text-lg font-semibold text-slate-700 mb-1.5">How can I help you today?</h2>
-        <p class="text-sm text-slate-400 max-w-md leading-relaxed">
-          Ask questions about the PMTPT Tuberculosis database in plain English. I'll translate your query into SQL and
-          return the results.
+      <!-- Hero -->
+      <div class="land-2 mb-2">
+        <h2 class="font-serif text-4xl text-stone-800 leading-snug mb-4">
+          Ask your TB database<br />
+          <span class="italic text-sage-600">in plain English.</span>
+        </h2>
+        <p class="text-stone-500 text-base leading-relaxed max-w-lg">
+          PMTPT Clinical AI lets healthcare workers and programme managers query the national
+          <strong class="font-medium text-stone-600">Tuberculosis Preventive Treatment</strong> database
+          without writing a single line of SQL. Type a question, get a clinical answer.
         </p>
-        <!-- Suggested questions -->
-        <div class="mt-6 flex flex-wrap gap-2 justify-center max-w-lg">
-          <button onclick="useQuestion('How many patients are currently active on TPT?')"
-            class="text-xs text-accent-700 bg-accent-50 border border-accent-200/60 rounded-full px-3.5 py-1.5 hover:bg-accent-100 transition-colors duration-150">
-            Active patients on TPT
-          </button>
-          <button onclick="useQuestion('What drugs are used in the 3HP regimen?')"
-            class="text-xs text-accent-700 bg-accent-50 border border-accent-200/60 rounded-full px-3.5 py-1.5 hover:bg-accent-100 transition-colors duration-150">
-            Drugs in 3HP regimen
-          </button>
-          <button onclick="useQuestion('Which adverse events require stopping TPT?')"
-            class="text-xs text-accent-700 bg-accent-50 border border-accent-200/60 rounded-full px-3.5 py-1.5 hover:bg-accent-100 transition-colors duration-150">
-            Adverse events requiring stop
-          </button>
-          <button onclick="useQuestion('How many districts are in Maharashtra?')"
-            class="text-xs text-accent-700 bg-accent-50 border border-accent-200/60 rounded-full px-3.5 py-1.5 hover:bg-accent-100 transition-colors duration-150">
-            Districts in Maharashtra
-          </button>
+      </div>
+
+      <div class="land-3 landing-rule my-7"></div>
+
+      <!-- What it does -->
+      <div class="land-4 mb-7">
+        <p class="text-[11px] font-medium tracking-widest uppercase text-stone-400 mb-4">What you can do</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+          <div class="capability-card">
+            <div class="flex items-start gap-3">
+              <div class="w-7 h-7 rounded-lg bg-sage-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-3.5 h-3.5 text-sage-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-stone-700 mb-0.5">Patient Tracking</p>
+                <p class="text-xs text-stone-400 leading-relaxed">Look up active enrolments, treatment status, adherence
+                  rates, and follow-up records by district, facility, or patient.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="capability-card">
+            <div class="flex items-start gap-3">
+              <div class="w-7 h-7 rounded-lg bg-sage-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-3.5 h-3.5 text-sage-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-stone-700 mb-0.5">Regimen & Drug Info</p>
+                <p class="text-xs text-stone-400 leading-relaxed">Query 6H, 3HP, 1HP, 3HR regimens — dosing, duration,
+                  contraindications, drug interactions, and adverse event thresholds.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="capability-card">
+            <div class="flex items-start gap-3">
+              <div class="w-7 h-7 rounded-lg bg-sage-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-3.5 h-3.5 text-sage-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="20" x2="18" y2="10" />
+                  <line x1="12" y1="20" x2="12" y2="4" />
+                  <line x1="6" y1="20" x2="6" y2="14" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-stone-700 mb-0.5">Programme Indicators</p>
+                <p class="text-xs text-stone-400 leading-relaxed">Generate care cascade reports, completion rates,
+                  interruption counts, and monitoring indicators per district or facility.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="capability-card">
+            <div class="flex items-start gap-3">
+              <div class="w-7 h-7 rounded-lg bg-sage-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-3.5 h-3.5 text-sage-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="1" y="3" width="15" height="13" rx="2" />
+                  <path d="M16 8h4l3 5v3h-7V8z" />
+                  <circle cx="5.5" cy="18.5" r="2.5" />
+                  <circle cx="18.5" cy="18.5" r="2.5" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-stone-700 mb-0.5">Supply Chain</p>
+                <p class="text-xs text-stone-400 leading-relaxed">Check drug stock levels, batch details, expiry status,
+                  and replenishment data across facilities.</p>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
-    </div>
-  </main>
+      <!-- Disclaimer note -->
+      <div class="land-5 flex items-start gap-2.5 bg-white border border-stone-200 rounded-xl px-4 py-3.5 mb-8">
+        <svg class="w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        <p class="text-xs text-stone-500 leading-relaxed">
+          This tool queries the PMTPT database using AI-generated SQL based on India's 2021 NTEP guidelines.
+          It is intended for programme management and reporting use.
+          <strong class="font-medium text-stone-600">Always verify critical clinical decisions with the treating
+            physician.</strong>
+        </p>
+      </div>
 
-  <!-- ─── Input Area  -->
-  <footer class="flex-shrink-0 bg-white/80 backdrop-blur border-t border-slate-200/70">
-    <div class="max-w-3xl mx-auto px-5 pt-3 pb-4">
-      <div class="flex items-end gap-2.5">
-        <div class="flex-1 relative">
-          <textarea id="user-input" rows="1" maxlength="1000" placeholder="Ask a question about the TB database…"
-            class="w-full resize-none rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent-300/50 focus:border-accent-300 transition-shadow duration-200"
-            style="max-height: 140px;"></textarea>
-          <!-- Character counter — shows when approaching limit -->
-          <span id="char-counter"
-            class="absolute bottom-2 right-3 text-[10px] text-slate-300 pointer-events-none hidden"></span>
-        </div>
-        <button id="send-btn" onclick="sendMessage()"
-          class="flex-shrink-0 h-[46px] w-[46px] rounded-xl bg-accent-600 hover:bg-accent-700 active:scale-95 text-white flex items-center justify-center transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      <!-- CTA -->
+      <div class="land-6 flex items-center gap-4 pb-10">
+        <button class="cta-btn" onclick="enterApp()">
+          Start Querying
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13" />
-            <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </button>
+        <p class="text-xs text-stone-400">No login required · Read-only access</p>
+      </div>
+
+    </div>
+  </div><!-- /#landing-view -->
+
+
+  <!-- ══════════════════════════════════════════════════
+     APP VIEW
+══════════════════════════════════════════════════ -->
+  <div id="app-view" class="h-full flex flex-col">
+
+    <!-- ── Sidebar overlay ── -->
+    <div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <!-- ── Sidebar ── -->
+    <aside id="sidebar">
+      <div class="flex items-center justify-between px-4 pt-5 pb-3 border-b border-stone-100">
+        <p class="text-xs font-semibold tracking-widest uppercase text-stone-400">History</p>
+        <button onclick="closeSidebar()"
+          class="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-stone-100 transition-colors">
+          <svg class="w-4 h-4 text-stone-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
-      <p class="text-[10.5px] text-slate-400 mt-2.5 text-center">AI-generated SQL may not always be accurate. Please
-        verify critical queries independently.</p>
+
+      <!-- Session list -->
+      <div id="history-list" class="flex-1 overflow-y-auto px-3 py-3 space-y-1">
+        <!-- populated by JS -->
+      </div>
+
+      <!-- Footer -->
+      <div class="px-3 py-3 border-t border-stone-100 space-y-1">
+        <button onclick="newSession()"
+          class="w-full text-left px-3 py-2 rounded-lg text-xs font-medium text-sage-700 bg-sage-50 hover:bg-sage-100 transition-colors flex items-center gap-2">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          New conversation
+        </button>
+        <button onclick="clearAllHistory()"
+          class="w-full text-left px-3 py-2 rounded-lg text-xs font-medium text-stone-400 hover:text-red-500 hover:bg-red-50 transition-colors flex items-center gap-2">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+            <path d="M10 11v6" />
+            <path d="M14 11v6" />
+            <path d="M9 6V4h6v2" />
+          </svg>
+          Clear all history
+        </button>
+      </div>
+    </aside>
+
+    <!-- ── Header ── -->
+    <header class="flex-shrink-0 bg-white/90 backdrop-blur border-b border-stone-200/70 z-30">
+      <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <!-- Sidebar toggle -->
+          <button id="sidebar-btn" onclick="toggleSidebar()"
+            class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-stone-100 transition-colors"
+            title="Chat history">
+            <svg class="w-4 h-4 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <div class="w-px h-5 bg-stone-200 mx-1"></div>
+          <div class="w-7 h-7 rounded-lg bg-sage-700 flex items-center justify-center">
+            <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a5 5 0 0 1 5 5v3a5 5 0 0 1-10 0V7a5 5 0 0 1 5-5Z" />
+              <path d="M19 10v1a7 7 0 0 1-14 0v-1" />
+              <line x1="12" y1="19" x2="12" y2="22" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-sm font-semibold text-stone-700 leading-none tracking-tight">PMTPT Clinical AI</h1>
+            <p class="text-[10px] text-stone-400 font-medium mt-0.5">TB Preventive Treatment · India</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- Status -->
+          <div id="status-indicator"
+            class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-stone-100 border border-stone-200 transition-all duration-500">
+            <span class="relative flex h-2 w-2">
+              <span id="status-ping"
+                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-stone-400 opacity-50"></span>
+              <span id="status-dot" class="relative inline-flex rounded-full h-2 w-2 bg-stone-400"></span>
+            </span>
+            <span id="status-text" class="text-[10px] font-medium text-stone-500">Checking…</span>
+          </div>
+          <!-- Home / Reset -->
+          <button onclick="goHome()" title="Back to home"
+            class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-stone-100 transition-colors">
+            <svg class="w-4 h-4 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── Slow-start banner ── -->
+    <div id="slowstart-banner"
+      class="flex-shrink-0 items-center gap-2.5 bg-amber-50 border-b border-amber-200/60 px-5 py-2.5">
+      <svg class="w-4 h-4 text-amber-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+      <p class="text-[11.5px] text-amber-700 leading-relaxed">
+        The backend is waking up from sleep — this first response may take up to 60 seconds on the free tier. Subsequent
+        requests will be fast.
+      </p>
     </div>
-  </footer>
 
-  <!-- ─── JavaScript -->
+    <!-- ── Chat area ── -->
+    <main id="chat-area" class="flex-1 overflow-y-auto">
+      <div id="messages" class="max-w-3xl mx-auto px-5 py-6 space-y-5"></div>
+    </main>
+
+    <!-- ── Input area ── -->
+    <footer class="flex-shrink-0 bg-white/90 backdrop-blur border-t border-stone-200/70">
+      <div class="max-w-3xl mx-auto px-4 pt-3 pb-4">
+        <div class="flex items-end gap-2">
+
+          <!-- Mic button -->
+          <div class="relative flex-shrink-0">
+            <button id="mic-btn" onclick="toggleVoice()" title="Voice input"
+              class="relative w-[46px] h-[46px] rounded-xl border border-stone-200 bg-stone-50 hover:bg-stone-100 flex items-center justify-center transition-all duration-200">
+              <span class="mic-ring absolute inset-0 rounded-xl bg-sage-300 opacity-0"></span>
+              <svg class="w-4.5 h-4.5 text-stone-500 relative z-10 w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3Z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="23" />
+                <line x1="8" y1="23" x2="16" y2="23" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Textarea -->
+          <div class="flex-1 relative">
+            <textarea id="user-input" rows="1" maxlength="1000"
+              placeholder="Ask about patients, regimens, drug stock, indicators…"
+              class="w-full resize-none rounded-xl border border-stone-200 bg-stone-50/80 px-4 py-3 text-sm text-stone-700 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-sage-300/60 focus:border-sage-300 transition-shadow duration-200"
+              style="max-height:140px;"></textarea>
+            <span id="char-counter"
+              class="absolute bottom-2 right-3 text-[10px] text-stone-300 pointer-events-none hidden"></span>
+          </div>
+
+          <!-- Send button -->
+          <button id="send-btn" onclick="sendMessage()"
+            class="flex-shrink-0 h-[46px] w-[46px] rounded-xl bg-sage-700 hover:bg-sage-800 active:scale-95 text-white flex items-center justify-center transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+          </button>
+        </div>
+        <p class="text-[10.5px] text-stone-400 mt-2 text-center">AI-generated SQL may not always be accurate. Verify
+          critical queries independently.</p>
+      </div>
+    </footer>
+
+  </div><!-- /#app-view -->
+
+
+  <!-- ══════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════ -->
   <script>
-    /* ── CONFIG 
-    Single source of truth for the backend URL.
-    Replace this value before deploying to Vercel.
-    */
-    const API_BASE = 'https://langgraph-field-sql-agent.onrender.com';   // e.g. https://pmtpt-clinical-api.onrender.com
+    /* ───────────────────────────────────────────────────
+       CONFIG — change this before deploying
+    ─────────────────────────────────────────────────── */
+    const API_BASE = 'https://langgraph-field-sql-agent.onrender.com';
 
-    /* ── DOM refs  */
+    /* ───────────────────────────────────────────────────
+       DOM REFS
+    ─────────────────────────────────────────────────── */
+    const landingView = document.getElementById('landing-view');
+    const appView = document.getElementById('app-view');
     const messagesEl = document.getElementById('messages');
     const chatArea = document.getElementById('chat-area');
     const inputEl = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
-    const welcomeCard = document.getElementById('welcome-card');
+    const micBtn = document.getElementById('mic-btn');
     const statusIndicator = document.getElementById('status-indicator');
     const statusDot = document.getElementById('status-dot');
     const statusPing = document.getElementById('status-ping');
     const statusText = document.getElementById('status-text');
     const slowBanner = document.getElementById('slowstart-banner');
     const charCounter = document.getElementById('char-counter');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const historyList = document.getElementById('history-list');
 
+    /* ───────────────────────────────────────────────────
+       STATE
+    ─────────────────────────────────────────────────── */
     let isProcessing = false;
-    let slowTimer = null;   // fires the sleep-warning banner after 8 s
+    let slowTimer = null;
+    let recognition = null;
+    let isListening = false;
+    let currentSessionId = null;   // active session key
 
-    /* ── Health check — updates status indicator on load ────── */
+    /* ───────────────────────────────────────────────────
+       VIEW TRANSITIONS
+    ─────────────────────────────────────────────────── */
+    function enterApp() {
+      landingView.classList.add('hidden-view');
+      appView.classList.add('visible-view');
+      // Start a fresh session if none loaded
+      if (!currentSessionId) newSession();
+      checkHealth();
+    }
+
+    function goHome() {
+      // Save current session before leaving
+      saveCurrentSession();
+      landingView.classList.remove('hidden-view');
+      appView.classList.remove('visible-view');
+      closeSidebar();
+    }
+
+    /* ───────────────────────────────────────────────────
+       SESSION / HISTORY  (localStorage)
+    
+       Storage schema:
+         pmtpt_sessions  →  [ { id, title, ts } ... ]   (index, sorted newest-first)
+         pmtpt_sess_{id} →  [ { role:'user'|'ai'|'error', text, time } ... ]
+    ─────────────────────────────────────────────────── */
+    const SESSIONS_KEY = 'pmtpt_sessions';
+    const SESSION_PFX = 'pmtpt_sess_';
+
+    function getSessions() {
+      try { return JSON.parse(localStorage.getItem(SESSIONS_KEY) || '[]'); }
+      catch { return []; }
+    }
+
+    function saveSessions(arr) {
+      localStorage.setItem(SESSIONS_KEY, JSON.stringify(arr));
+    }
+
+    function getSessionMessages(id) {
+      try { return JSON.parse(localStorage.getItem(SESSION_PFX + id) || '[]'); }
+      catch { return []; }
+    }
+
+    function saveSessionMessages(id, msgs) {
+      localStorage.setItem(SESSION_PFX + id, JSON.stringify(msgs));
+    }
+
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    }
+
+    /** Create a brand-new empty session and load it */
+    function newSession() {
+      saveCurrentSession();  // persist whatever is open
+
+      const id = generateId();
+      const sessions = getSessions();
+      sessions.unshift({ id, title: 'New conversation', ts: Date.now() });
+      saveSessions(sessions);
+
+      currentSessionId = id;
+      messagesEl.innerHTML = '';
+      renderWelcomeCard();
+      renderHistoryList();
+      closeSidebar();
+      inputEl.focus();
+    }
+
+    /** Persist the current DOM messages to localStorage */
+    function saveCurrentSession() {
+      if (!currentSessionId) return;
+      const bubbles = messagesEl.querySelectorAll('[data-role]');
+      if (!bubbles.length) return;
+
+      const msgs = Array.from(bubbles).map(el => ({
+        role: el.dataset.role,
+        text: el.dataset.text || '',
+        time: el.dataset.time || '',
+      }));
+
+      saveSessionMessages(currentSessionId, msgs);
+
+      // Update session title from first user message
+      const firstUser = msgs.find(m => m.role === 'user');
+      if (firstUser) {
+        const sessions = getSessions();
+        const idx = sessions.findIndex(s => s.id === currentSessionId);
+        if (idx !== -1) {
+          sessions[idx].title = firstUser.text.slice(0, 52) + (firstUser.text.length > 52 ? '…' : '');
+          sessions[idx].ts = Date.now();
+          saveSessions(sessions);
+        }
+      }
+    }
+
+    /** Load a past session by id — restore all messages to DOM */
+    function loadSession(id) {
+      saveCurrentSession();
+      currentSessionId = id;
+
+      messagesEl.innerHTML = '';
+      const msgs = getSessionMessages(id);
+
+      if (!msgs.length) {
+        renderWelcomeCard();
+      } else {
+        msgs.forEach(m => {
+          if (m.role === 'user') _addUserBubble(m.text, m.time, false);
+          else if (m.role === 'ai') _addAIBubble(m.text, m.time, false);
+          else if (m.role === 'error') _addErrorBubble(m.text, false);
+        });
+        scrollToBottom();
+      }
+
+      renderHistoryList();
+      closeSidebar();
+    }
+
+    /** Delete a single session */
+    function deleteSession(id, e) {
+      e.stopPropagation();
+      let sessions = getSessions().filter(s => s.id !== id);
+      saveSessions(sessions);
+      localStorage.removeItem(SESSION_PFX + id);
+
+      if (id === currentSessionId) {
+        if (sessions.length) loadSession(sessions[0].id);
+        else newSession();
+      } else {
+        renderHistoryList();
+      }
+    }
+
+    /** Wipe everything */
+    function clearAllHistory() {
+      if (!confirm('Delete all conversation history? This cannot be undone.')) return;
+      const sessions = getSessions();
+      sessions.forEach(s => localStorage.removeItem(SESSION_PFX + s.id));
+      localStorage.removeItem(SESSIONS_KEY);
+      currentSessionId = null;
+      newSession();
+    }
+
+    /** Render the sidebar list */
+    function renderHistoryList() {
+      const sessions = getSessions();
+      if (!sessions.length) {
+        historyList.innerHTML = `<p class="text-xs text-stone-400 px-2 py-4 text-center leading-relaxed">No saved conversations yet.<br/>Start asking to build history.</p>`;
+        return;
+      }
+
+      historyList.innerHTML = sessions.map(s => `
+    <div class="history-item flex items-start justify-between gap-2 group ${s.id === currentSessionId ? 'active' : ''}"
+         onclick="loadSession('${s.id}')">
+      <div class="min-w-0">
+        <p class="text-xs font-medium text-stone-700 truncate leading-snug">${escapeHtml(s.title)}</p>
+        <p class="text-[10px] text-stone-400 mt-0.5">${relativeTime(s.ts)}</p>
+      </div>
+      <button onclick="deleteSession('${s.id}', event)"
+        class="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center text-stone-300 hover:text-red-400 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all mt-0.5">
+        <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  `).join('');
+    }
+
+    function relativeTime(ts) {
+      const diff = Date.now() - ts;
+      const m = Math.floor(diff / 60000);
+      if (m < 1) return 'Just now';
+      if (m < 60) return `${m}m ago`;
+      const h = Math.floor(m / 60);
+      if (h < 24) return `${h}h ago`;
+      const d = Math.floor(h / 24);
+      if (d < 7) return `${d}d ago`;
+      return new Date(ts).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+    }
+
+    /* ───────────────────────────────────────────────────
+       SIDEBAR CONTROLS
+    ─────────────────────────────────────────────────── */
+    function toggleSidebar() {
+      sidebar.classList.toggle('open');
+      sidebarOverlay.classList.toggle('visible');
+      if (sidebar.classList.contains('open')) renderHistoryList();
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      sidebarOverlay.classList.remove('visible');
+    }
+
+    /* ───────────────────────────────────────────────────
+       WELCOME CARD
+    ─────────────────────────────────────────────────── */
+    function renderWelcomeCard() {
+      const card = document.createElement('div');
+      card.id = 'welcome-card';
+      card.className = 'msg-animate flex flex-col items-center text-center py-10';
+      card.innerHTML = `
+    <div class="w-12 h-12 rounded-2xl bg-sage-100 border border-sage-200/50 flex items-center justify-center mb-5">
+      <svg class="w-6 h-6 text-sage-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    </div>
+    <h2 class="text-base font-semibold text-stone-700 mb-1.5">What would you like to know?</h2>
+    <p class="text-sm text-stone-400 max-w-md leading-relaxed">
+      Ask in plain English. I'll query the PMTPT database and return clinical results.
+    </p>
+    <div class="mt-5 flex flex-wrap gap-2 justify-center max-w-lg">
+      <button onclick="useQuestion('How many patients are currently active on TPT?')"
+        class="text-xs text-sage-700 bg-sage-50 border border-sage-200/70 rounded-full px-3.5 py-1.5 hover:bg-sage-100 transition-colors">
+        Active patients on TPT
+      </button>
+      <button onclick="useQuestion('What drugs are used in the 3HP regimen and what are the contraindications?')"
+        class="text-xs text-sage-700 bg-sage-50 border border-sage-200/70 rounded-full px-3.5 py-1.5 hover:bg-sage-100 transition-colors">
+        3HP regimen details
+      </button>
+      <button onclick="useQuestion('Which adverse events require stopping TPT immediately?')"
+        class="text-xs text-sage-700 bg-sage-50 border border-sage-200/70 rounded-full px-3.5 py-1.5 hover:bg-sage-100 transition-colors">
+        Adverse events — stop TPT
+      </button>
+      <button onclick="useQuestion('Show the care cascade summary for all districts')"
+        class="text-xs text-sage-700 bg-sage-50 border border-sage-200/70 rounded-full px-3.5 py-1.5 hover:bg-sage-100 transition-colors">
+        District care cascade
+      </button>
+      <button onclick="useQuestion('How many patients in Mumbai are on the 6H regimen?')"
+        class="text-xs text-sage-700 bg-sage-50 border border-sage-200/70 rounded-full px-3.5 py-1.5 hover:bg-sage-100 transition-colors">
+        Mumbai · 6H patients
+      </button>
+    </div>
+  `;
+      messagesEl.appendChild(card);
+    }
+
+    /* ───────────────────────────────────────────────────
+       HEALTH CHECK
+    ─────────────────────────────────────────────────── */
     async function checkHealth() {
       try {
         const res = await fetch(`${API_BASE}/health`, { signal: AbortSignal.timeout(65000) });
-        const ok = res.ok;
-        setStatus(ok ? 'connected' : 'degraded');
+        setStatus(res.ok ? 'connected' : 'degraded');
       } catch {
         setStatus('offline');
       }
@@ -378,52 +1067,105 @@
 
     function setStatus(state) {
       const map = {
-        connected: {
-          dot: 'bg-accent-500', ping: 'bg-accent-400',
-          bg: 'bg-accent-50 border-accent-200/60',
-          text: 'text-accent-700', label: 'System Connected',
-        },
-        degraded: {
-          dot: 'bg-amber-500', ping: 'bg-amber-400',
-          bg: 'bg-amber-50 border-amber-200/60',
-          text: 'text-amber-700', label: 'Degraded',
-        },
-        offline: {
-          dot: 'bg-red-400', ping: 'bg-red-300',
-          bg: 'bg-red-50 border-red-200/60',
-          text: 'text-red-600', label: 'Offline',
-        },
-        checking: {
-          dot: 'bg-slate-400', ping: 'bg-slate-400',
-          bg: 'bg-slate-100 border-slate-200/60',
-          text: 'text-slate-500', label: 'Checking…',
-        },
+        connected: { dot: 'bg-sage-500', ping: 'bg-sage-400', bg: 'bg-sage-50 border-sage-200/60', text: 'text-sage-700', label: 'System Connected' },
+        degraded: { dot: 'bg-amber-500', ping: 'bg-amber-400', bg: 'bg-amber-50 border-amber-200/60', text: 'text-amber-700', label: 'Degraded' },
+        offline: { dot: 'bg-red-400', ping: 'bg-red-300', bg: 'bg-red-50 border-red-200/60', text: 'text-red-600', label: 'Offline' },
+        checking: { dot: 'bg-stone-400', ping: 'bg-stone-400', bg: 'bg-stone-100 border-stone-200', text: 'text-stone-500', label: 'Checking…' },
       };
       const s = map[state] || map.checking;
       statusIndicator.className = `flex items-center gap-1.5 px-2.5 py-1 rounded-full border transition-all duration-500 ${s.bg}`;
       statusDot.className = `relative inline-flex rounded-full h-2 w-2 ${s.dot}`;
       statusPing.className = `animate-ping absolute inline-flex h-full w-full rounded-full opacity-50 ${s.ping}`;
-      statusText.className = `text-[11px] font-medium ${s.text}`;
+      statusText.className = `text-[10px] font-medium ${s.text}`;
       statusText.textContent = s.label;
     }
 
-    /* ── Auto-resize textarea  */
+    /* ───────────────────────────────────────────────────
+       VOICE INPUT  (Web Speech API)
+    ─────────────────────────────────────────────────── */
+    (function initVoice() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        micBtn.title = 'Voice input not supported in this browser';
+        micBtn.style.opacity = '0.4';
+        micBtn.style.cursor = 'not-allowed';
+        micBtn.onclick = () => alert('Voice input requires Chrome or Edge on desktop.');
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-IN';
+      recognition.interimResults = true;
+      recognition.continuous = false;
+      recognition.maxAlternatives = 1;
+
+      let finalTranscript = '';
+
+      recognition.onstart = () => {
+        isListening = true;
+        finalTranscript = '';
+        micBtn.classList.add('listening');
+        micBtn.title = 'Listening… click to stop';
+      };
+
+      recognition.onresult = (e) => {
+        let interim = '';
+        finalTranscript = '';
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript;
+          else interim += e.results[i][0].transcript;
+        }
+        inputEl.value = finalTranscript || interim;
+        inputEl.dispatchEvent(new Event('input'));
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        micBtn.classList.remove('listening');
+        micBtn.title = 'Voice input';
+        if (finalTranscript.trim()) {
+          inputEl.value = finalTranscript.trim();
+          inputEl.dispatchEvent(new Event('input'));
+          inputEl.focus();
+        }
+      };
+
+      recognition.onerror = (e) => {
+        isListening = false;
+        micBtn.classList.remove('listening');
+        if (e.error !== 'no-speech' && e.error !== 'aborted') {
+          console.warn('Speech recognition error:', e.error);
+        }
+      };
+    })();
+
+    function toggleVoice() {
+      if (!recognition) return;
+      if (isListening) {
+        recognition.stop();
+      } else {
+        try { recognition.start(); }
+        catch (e) { console.warn('Recognition already started', e); }
+      }
+    }
+
+    /* ───────────────────────────────────────────────────
+       AUTO-RESIZE + CHAR COUNTER
+    ─────────────────────────────────────────────────── */
     inputEl.addEventListener('input', () => {
       inputEl.style.height = 'auto';
       inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + 'px';
-      // Character counter
       const len = inputEl.value.length;
       if (len > 800) {
         charCounter.textContent = `${len}/1000`;
-        charCounter.className = charCounter.className.replace('hidden', '');
+        charCounter.classList.remove('hidden');
         charCounter.classList.toggle('text-red-400', len >= 950);
-        charCounter.classList.toggle('text-slate-400', len < 950);
+        charCounter.classList.toggle('text-stone-300', len < 950);
       } else {
         charCounter.classList.add('hidden');
       }
     });
 
-    /* ── Enter to send (Shift+Enter for newline)  */
     inputEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey && !isProcessing) {
         e.preventDefault();
@@ -431,201 +1173,201 @@
       }
     });
 
-    /* ── Scroll to bottom  */
+    /* ───────────────────────────────────────────────────
+       SCROLL
+    ─────────────────────────────────────────────────── */
     function scrollToBottom() {
       requestAnimationFrame(() => {
         chatArea.scrollTo({ top: chatArea.scrollHeight, behavior: 'smooth' });
       });
     }
 
-    /* ── Suggested question chip click */
+    /* ───────────────────────────────────────────────────
+       SUGGESTED QUESTIONS
+    ─────────────────────────────────────────────────── */
     function useQuestion(text) {
       inputEl.value = text;
       inputEl.dispatchEvent(new Event('input'));
       sendMessage();
     }
 
-    /* ── Simple Markdown → HTML (XSS-safe)  */
+    /* ───────────────────────────────────────────────────
+       MARKDOWN → HTML  (XSS-safe)
+    ─────────────────────────────────────────────────── */
     function escapeHtml(str) {
       return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
     }
 
     function renderMarkdown(text) {
       if (!text) return '';
       let html = text
-        // Code blocks — escape content before wrapping
-        .replace(/```(\w*)\n([\s\S]*?)```/g, (_, _lang, code) =>
-          `<pre><code>${escapeHtml(code.trim())}</code></pre>`)
-        // Inline code — escape content before wrapping (XSS fix)
+        .replace(/```(\w*)\n([\s\S]*?)```/g, (_, _l, code) => `<pre><code>${escapeHtml(code.trim())}</code></pre>`)
         .replace(/`([^`]+)`/g, (_, code) => `<code>${escapeHtml(code)}</code>`)
-        // Bold
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-        // Italic
         .replace(/\*(.+?)\*/g, '<em>$1</em>')
-        // Headings
         .replace(/^### (.+)$/gm, '<h3>$1</h3>')
         .replace(/^## (.+)$/gm, '<h2>$1</h2>')
         .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-        // Blockquotes
         .replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>')
-        // Unordered lists
         .replace(/^[\-\*] (.+)$/gm, '<li>$1</li>');
 
-      // Tables
       html = html.replace(
         /^(\|.+\|)\s*\n\|[\s\-:|]+\|\s*\n((?:\|.+\|\s*\n?)*)/gm,
-        (_, headerRow, bodyRows) => {
-          const headers = headerRow.split('|').filter(c => c.trim()).map(c => `<th>${c.trim()}</th>`).join('');
-          const rows = bodyRows.trim().split('\n').map(row => {
+        (_, hRow, bRows) => {
+          const heads = hRow.split('|').filter(c => c.trim()).map(c => `<th>${c.trim()}</th>`).join('');
+          const rows = bRows.trim().split('\n').map(row => {
             const cells = row.split('|').filter(c => c.trim()).map(c => `<td>${c.trim()}</td>`).join('');
             return `<tr>${cells}</tr>`;
           }).join('');
-          return `<table><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
+          return `<table><thead><tr>${heads}</tr></thead><tbody>${rows}</tbody></table>`;
         }
       );
 
-      // Wrap consecutive <li> in <ul>
       html = html.replace(/((?:<li>.*<\/li>\s*)+)/g, '<ul>$1</ul>');
-      // Paragraphs for remaining lines
       html = html.split('\n').map(line => {
-        const trimmed = line.trim();
-        if (!trimmed) return '';
-        if (/^<(?:h[1-6]|ul|ol|li|pre|table|thead|tbody|tr|th|td|blockquote|div)/.test(trimmed)) return trimmed;
-        return `<p>${trimmed}</p>`;
+        const t = line.trim();
+        if (!t) return '';
+        if (/^<(?:h[1-6]|ul|ol|li|pre|table|thead|tbody|tr|th|td|blockquote|div)/.test(t)) return t;
+        return `<p>${t}</p>`;
       }).join('\n');
 
       return html;
     }
 
-    /* ── Format timestamp ───────────────────────────────────── */
     function formatTime() {
       return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
-    /* ── Add user message bubble ────────────────────────────── */
-    function addUserMessage(text) {
-      const div = document.createElement('div');
-      div.className = 'msg-animate flex justify-end';
-      div.innerHTML = `
-        <div class="max-w-[85%] md:max-w-[75%]">
-          <div class="bg-slate-100 border border-slate-200/70 rounded-2xl rounded-br-md px-4 py-3">
-            <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">${escapeHtml(text)}</p>
-          </div>
-          <p class="text-[10px] text-slate-400 mt-1 text-right mr-1">You · ${formatTime()}</p>
-        </div>
-      `;
-      messagesEl.appendChild(div);
-      scrollToBottom();
+    /* ───────────────────────────────────────────────────
+       MESSAGE RENDERING
+       Each bubble gets data-role / data-text / data-time
+       so we can persist + restore them.
+    ─────────────────────────────────────────────────── */
+    function dismissWelcomeCard() {
+      const card = document.getElementById('welcome-card');
+      if (card) {
+        card.style.transition = 'opacity 0.2s ease';
+        card.style.opacity = '0';
+        setTimeout(() => card.remove(), 200);
+      }
     }
 
-    /* ── Add typing indicator ───────────────────────────────── */
+    function _addUserBubble(text, time, animate) {
+      const div = document.createElement('div');
+      div.className = (animate ? 'msg-animate ' : '') + 'flex justify-end';
+      div.dataset.role = 'user';
+      div.dataset.text = text;
+      div.dataset.time = time;
+      div.innerHTML = `
+    <div class="max-w-[85%] md:max-w-[75%]">
+      <div class="bg-sage-50 border border-sage-200/70 rounded-2xl rounded-br-md px-4 py-3">
+        <p class="text-sm text-stone-700 leading-relaxed whitespace-pre-wrap">${escapeHtml(text)}</p>
+      </div>
+      <p class="text-[10px] text-stone-400 mt-1 text-right mr-1">You · ${time}</p>
+    </div>`;
+      messagesEl.appendChild(div);
+      if (animate) scrollToBottom();
+    }
+
+    function _addAIBubble(text, time, animate) {
+      const div = document.createElement('div');
+      div.className = (animate ? 'msg-animate ' : '') + 'flex justify-start';
+      div.dataset.role = 'ai';
+      div.dataset.text = text;
+      div.dataset.time = time;
+      div.innerHTML = `
+    <div class="max-w-[90%] md:max-w-[80%]">
+      <div class="bg-white border border-stone-200/70 rounded-2xl rounded-bl-md px-5 py-4 shadow-sm shadow-stone-100/80">
+        <div class="ai-prose text-sm text-stone-700 leading-relaxed">${renderMarkdown(text)}</div>
+      </div>
+      <p class="text-[10px] text-stone-400 mt-1 ml-1">AI Assistant · ${time}</p>
+    </div>`;
+      messagesEl.appendChild(div);
+      if (animate) scrollToBottom();
+    }
+
+    function _addErrorBubble(errorText, animate) {
+      const div = document.createElement('div');
+      div.className = (animate ? 'msg-animate ' : '') + 'flex justify-start';
+      div.dataset.role = 'error';
+      div.dataset.text = errorText;
+      div.innerHTML = `
+    <div class="max-w-[85%] md:max-w-[75%]">
+      <div class="bg-white border border-red-200/60 rounded-2xl rounded-bl-md px-5 py-4">
+        <div class="flex items-start gap-2.5">
+          <svg class="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+          </svg>
+          <p class="text-sm text-red-600/80 leading-relaxed">${escapeHtml(errorText)}</p>
+        </div>
+      </div>
+    </div>`;
+      messagesEl.appendChild(div);
+      if (animate) scrollToBottom();
+    }
+
+    function addUserMessage(text) { _addUserBubble(text, formatTime(), true); }
+    function addAIMessage(text) { _addAIBubble(text, formatTime(), true); }
+    function addErrorMessage(text) { _addErrorBubble(text, true); }
+
     function addTypingIndicator() {
       const div = document.createElement('div');
       div.id = 'typing-indicator';
       div.className = 'msg-animate flex justify-start';
       div.innerHTML = `
-        <div class="flex items-center gap-2 bg-white border border-slate-200/70 rounded-2xl rounded-bl-md px-4 py-3">
-          <div class="flex items-center gap-1">
-            <span class="dot-1 w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>
-            <span class="dot-2 w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>
-            <span class="dot-3 w-1.5 h-1.5 rounded-full bg-slate-400 inline-block"></span>
-          </div>
-          <span class="text-xs text-slate-400 ml-1">Analyzing query…</span>
-        </div>
-      `;
+    <div class="flex items-center gap-2 bg-white border border-stone-200/70 rounded-2xl rounded-bl-md px-4 py-3">
+      <div class="flex items-center gap-1">
+        <span class="dot-1 w-1.5 h-1.5 rounded-full bg-stone-400 inline-block"></span>
+        <span class="dot-2 w-1.5 h-1.5 rounded-full bg-stone-400 inline-block"></span>
+        <span class="dot-3 w-1.5 h-1.5 rounded-full bg-stone-400 inline-block"></span>
+      </div>
+      <span class="text-xs text-stone-400 ml-1">Analysing query…</span>
+    </div>`;
       messagesEl.appendChild(div);
       scrollToBottom();
     }
 
     function removeTypingIndicator() {
-      const el = document.getElementById('typing-indicator');
-      if (el) el.remove();
+      document.getElementById('typing-indicator')?.remove();
     }
 
-    /* ── Add AI response bubble ─────────────────────────────── */
-    function addAIMessage(answer) {
-      const div = document.createElement('div');
-      div.className = 'msg-animate flex justify-start';
-      div.innerHTML = `
-        <div class="max-w-[90%] md:max-w-[80%]">
-          <div class="bg-white border border-slate-200/70 rounded-2xl rounded-bl-md px-5 py-4 shadow-sm shadow-slate-100/80">
-            <div class="ai-prose text-sm text-slate-700 leading-relaxed">
-              ${renderMarkdown(answer)}
-            </div>
-          </div>
-          <p class="text-[10px] text-slate-400 mt-1 ml-1">AI Assistant · ${formatTime()}</p>
-        </div>
-      `;
-      messagesEl.appendChild(div);
-      scrollToBottom();
-    }
-
-    /* ── Add error message ──────────────────────────────────── */
-    function addErrorMessage(errorText) {
-      const div = document.createElement('div');
-      div.className = 'msg-animate flex justify-start';
-      div.innerHTML = `
-        <div class="max-w-[85%] md:max-w-[75%]">
-          <div class="bg-white border border-red-200/60 rounded-2xl rounded-bl-md px-5 py-4">
-            <div class="flex items-start gap-2.5">
-              <svg class="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="15" y1="9" x2="9" y2="15"/>
-                <line x1="9" y1="9" x2="15" y2="15"/>
-              </svg>
-              <p class="text-sm text-red-600/80 leading-relaxed">${escapeHtml(errorText)}</p>
-            </div>
-          </div>
-        </div>
-      `;
-      messagesEl.appendChild(div);
-      scrollToBottom();
-    }
-
-    /* ── Lock / unlock UI during processing ─────────────────── */
+    /* ───────────────────────────────────────────────────
+       LOCK / UNLOCK
+    ─────────────────────────────────────────────────── */
     function setProcessing(state) {
       isProcessing = state;
       sendBtn.disabled = state;
-      inputEl.disabled = state;       // textarea also locked — no accidental sends
+      inputEl.disabled = state;
     }
 
-    /* ── Send message ───────────────────────────────────────── */
+    /* ───────────────────────────────────────────────────
+       SEND MESSAGE
+    ─────────────────────────────────────────────────── */
     async function sendMessage() {
       const text = inputEl.value.trim();
       if (!text || isProcessing) return;
 
-      // Client-side length guard (mirrors backend 1000-char limit)
       if (text.length > 1000) {
         addErrorMessage('Your question is too long. Please keep it under 1000 characters.');
         return;
       }
 
       setProcessing(true);
-
-      // Hide welcome card on first message
-      if (welcomeCard && welcomeCard.parentNode) {
-        welcomeCard.style.transition = 'opacity 0.2s ease';
-        welcomeCard.style.opacity = '0';
-        setTimeout(() => welcomeCard.remove(), 200);
-      }
-
+      dismissWelcomeCard();
       addUserMessage(text);
       inputEl.value = '';
       inputEl.style.height = 'auto';
       charCounter.classList.add('hidden');
       addTypingIndicator();
 
-      // Show sleep-warning banner if backend takes > 8 s
-      slowTimer = setTimeout(() => {
-        slowBanner.classList.add('visible');
-      }, 3000);
+      // Save session title after first message
+      saveCurrentSession();
+      renderHistoryList();
 
-      // AbortController — cancel fetch after 90 s
+      slowTimer = setTimeout(() => slowBanner.classList.add('visible'), 3000);
+
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 90000);
 
@@ -644,18 +1386,14 @@
 
         if (response.status === 429) {
           addErrorMessage('Too many requests — please wait a moment before asking again.');
-          return;
-        }
-        if (response.status === 401) {
+        } else if (response.status === 401) {
           addErrorMessage('Authentication error. Please contact the administrator.');
-          return;
-        }
-        if (!response.ok) {
+        } else if (!response.ok) {
           throw new Error(`Server responded with ${response.status}`);
+        } else {
+          const data = await response.json();
+          addAIMessage(data.answer || 'No response received.');
         }
-
-        const data = await response.json();
-        addAIMessage(data.answer || 'No response received.');
 
       } catch (err) {
         clearTimeout(timeout);
@@ -664,18 +1402,25 @@
         removeTypingIndicator();
 
         if (err.name === 'AbortError') {
-          addErrorMessage('The request timed out after 90 seconds. The backend may be under heavy load — please try again.');
+          addErrorMessage('The request timed out after 90 seconds. Please try again.');
         } else {
           addErrorMessage(`Could not reach the assistant. ${err.message}`);
         }
       } finally {
         setProcessing(false);
+        // Persist after every exchange
+        saveCurrentSession();
+        renderHistoryList();
         inputEl.focus();
       }
     }
 
-    /* ── Init  */
-    checkHealth();
+    /* ───────────────────────────────────────────────────
+       INIT — render history list on sidebar open;
+       sessions are lazy-loaded, nothing runs at boot.
+    ─────────────────────────────────────────────────── */
+    // Pre-render history list so it's ready when sidebar opens
+    renderHistoryList();
   </script>
 
 </body>
