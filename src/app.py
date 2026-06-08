@@ -16,7 +16,7 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
-from src.main import graph
+from main import graph
 
 # Logging — structured so Render's log viewer can parse it cleanly
 logging.basicConfig(
@@ -145,13 +145,13 @@ async def ask(
         logger.exception("LangGraph invocation failed: %s", exc)
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail="The AI backend failed to process your request. Please try again.",
+            detail="Something went wrong.",
         ) from exc
 
     answer = result.get("formatted_response", "")
     if not answer:
         logger.warning("Graph returned an empty formatted_response.")
-        answer = "No answer could be generated. Please rephrase your question."
+        answer = "Something went wrong."
 
     # NOTE: generated_sql is intentionally NOT returned to the client.
     # Exposing it would reveal your full DB schema to browser devtools.

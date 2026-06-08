@@ -396,42 +396,15 @@ FORMATTED RESPONSE:"""
         return {**state, "formatted_response": formatted}
     except Exception as e:
         logger.exception("LLM failed to format response: %s", e)
-        # Graceful fallback — return the raw result rather than a blank answer
-        return {
-            **state,
-            "formatted_response": (
-                f"Results retrieved but formatting failed.\n\n"
-                f"```\n{state['query_result']}\n```"
-            ),
-        }
+        return {**state, "formatted_response": "Something went wrong."}
 
 
 def handle_error(state: AgentState) -> AgentState:
-    """Return a user-friendly error message that includes the actual error detail."""
+    """Log the real error to terminal; return only a generic message to the client."""
     error_msg = state.get("error", "An unknown error occurred.")
-    logger.error("Returning error to user: %s", error_msg)
+    logger.error("Agent handle_error (full detail): %s", error_msg)
+    return {**state, "formatted_response": "Something went wrong."}
 
-    # Categorise the error so the message is actionable
-    if "schema" in error_msg.lower():
-        hint = "There was a problem reading the database schema."
-    elif "sql" in error_msg.lower() or "select" in error_msg.lower() or "keyword" in error_msg.lower():
-        hint = "The query generated from your question was invalid or unsafe."
-    elif "database" in error_msg.lower() or "query" in error_msg.lower():
-        hint = "The database query failed to execute."
-    elif "llm" in error_msg.lower() or "groq" in error_msg.lower():
-        hint = "The AI model failed to generate a response."
-    else:
-        hint = "An unexpected error occurred while processing your request."
-
-    return {
-        **state,
-        "formatted_response": (
-            f"⚠️ **Request could not be processed**\n\n"
-            f"**Reason:** {hint}\n\n"
-            f"**Details:** `{error_msg}`\n\n"
-            f"Please try rephrasing your question, or contact support if this persists."
-        ),
-    }
 
 
 def route_after_validation(state: AgentState) -> Literal["execute_query", "handle_error"]:

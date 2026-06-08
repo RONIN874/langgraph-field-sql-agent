@@ -1350,7 +1350,7 @@
       if (!text || isProcessing) return;
 
       if (text.length > 1000) {
-        addErrorMessage('Your question is too long. Please keep it under 1000 characters.');
+        addErrorMessage('Something went wrong.');
         return;
       }
 
@@ -1385,9 +1385,9 @@
         removeTypingIndicator();
 
         if (response.status === 429) {
-          addErrorMessage('Too many requests — please wait a moment before asking again.');
+          addErrorMessage('Something went wrong.');
         } else if (response.status === 401) {
-          addErrorMessage('Authentication error. Please contact the administrator.');
+          addErrorMessage('Something went wrong.');
         } else if (!response.ok) {
           throw new Error(`Server responded with ${response.status}`);
         } else {
@@ -1402,9 +1402,9 @@
         removeTypingIndicator();
 
         if (err.name === 'AbortError') {
-          addErrorMessage('The request timed out after 90 seconds. Please try again.');
+          addErrorMessage('Something went wrong.');
         } else {
-          addErrorMessage(`Could not reach the assistant. ${err.message}`);
+          addErrorMessage("Something went wrong.");
         }
       } finally {
         setProcessing(false);
