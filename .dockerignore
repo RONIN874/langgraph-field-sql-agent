@@ -1,0 +1,14 @@
+.venv
+.env
+.git
+.vscode
+.mypy_cache
+__pycache__
+*.pyc
+*.pyo
+notebooks/
+tests/
+*.md
+.gitignore
+render.yaml
+vercel.json
